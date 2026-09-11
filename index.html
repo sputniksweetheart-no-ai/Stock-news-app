@@ -64,6 +64,18 @@
       border-radius: 999px;
       font-size: 14px;
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .delete-stock {
+      border: none;
+      background: transparent;
+      color: #999;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0;
     }
 
     .add-stock {
@@ -128,15 +140,6 @@
       font-size: 12px;
       color: #555d68;
     }
-
-    .important {
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid #f0f1f3;
-      color: #555d68;
-      font-size: 13px;
-      line-height: 1.55;
-    }
   </style>
 </head>
 
@@ -151,6 +154,7 @@
       </div>
     </header>
 
+
     <section class="section">
 
       <div class="section-title">
@@ -158,10 +162,6 @@
       </div>
 
       <div class="stocks" id="stockList">
-
-        <div class="stock">삼성전자</div>
-        <div class="stock">SK하이닉스</div>
-        <div class="stock">현대차</div>
 
         <button class="add-stock" id="addStockButton">
           + 종목 추가
@@ -171,6 +171,7 @@
 
     </section>
 
+
     <section class="section">
 
       <div class="section-title">
@@ -179,6 +180,7 @@
 
       <div class="news-card">
         <div class="news-top">
+
           <div class="news-title">
             삼성전자, 차세대 HBM 공급 확대 논의
           </div>
@@ -186,6 +188,7 @@
           <div class="new-badge">
             NEW
           </div>
+
         </div>
 
         <div class="news-meta">
@@ -196,24 +199,6 @@
           <span class="tag">삼성전자</span>
           <span class="tag">HBM</span>
           <span class="tag">AI 반도체</span>
-        </div>
-      </div>
-
-      <div class="news-card">
-        <div class="news-top">
-          <div class="news-title">
-            SK하이닉스, AI 메모리 생산 투자 확대
-          </div>
-        </div>
-
-        <div class="news-meta">
-          한국경제 · 1시간 전
-        </div>
-
-        <div class="tags">
-          <span class="tag">SK하이닉스</span>
-          <span class="tag">AI</span>
-          <span class="tag">메모리</span>
         </div>
       </div>
 
@@ -231,28 +216,106 @@
       document.getElementById("stockList");
 
 
-    addButton.addEventListener("click", function () {
+    let stocks =
+      JSON.parse(localStorage.getItem("stocks")) || [
+        "삼성전자",
+        "SK하이닉스",
+        "현대차"
+      ];
 
-      const stockName =
-        prompt("추가할 종목 이름을 입력하세요.");
 
-      if (!stockName) {
-        return;
-      }
+    function saveStocks() {
 
-      const newStock =
-        document.createElement("div");
-
-      newStock.className = "stock";
-
-      newStock.textContent = stockName;
-
-      stockList.insertBefore(
-        newStock,
-        addButton
+      localStorage.setItem(
+        "stocks",
+        JSON.stringify(stocks)
       );
 
-    });
+    }
+
+
+    function renderStocks() {
+
+      const existingStocks =
+        document.querySelectorAll(".stock");
+
+      existingStocks.forEach(function(stock) {
+        stock.remove();
+      });
+
+
+      stocks.forEach(function(stockName, index) {
+
+        const stock =
+          document.createElement("div");
+
+        stock.className = "stock";
+
+
+        const name =
+          document.createElement("span");
+
+        name.textContent = stockName;
+
+
+        const deleteButton =
+          document.createElement("button");
+
+        deleteButton.className = "delete-stock";
+        deleteButton.textContent = "×";
+
+
+        deleteButton.addEventListener(
+          "click",
+          function() {
+
+            stocks.splice(index, 1);
+
+            saveStocks();
+
+            renderStocks();
+
+          }
+        );
+
+
+        stock.appendChild(name);
+
+        stock.appendChild(deleteButton);
+
+        stockList.insertBefore(
+          stock,
+          addButton
+        );
+
+      });
+
+    }
+
+
+    addButton.addEventListener(
+      "click",
+      function() {
+
+        const stockName =
+          prompt("추가할 종목 이름을 입력하세요.");
+
+        if (!stockName) {
+          return;
+        }
+
+
+        stocks.push(stockName);
+
+        saveStocks();
+
+        renderStocks();
+
+      }
+    );
+
+
+    renderStocks();
 
   </script>
 

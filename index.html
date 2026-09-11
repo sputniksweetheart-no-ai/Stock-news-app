@@ -1,220 +1,160 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Stock News</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Roboto, Arial, sans-serif;
-      background: #f6f7f9;
-      color: #16181d;
+      font-family: Arial, sans-serif;
+      background: #f5f6f8;
+      color: #222;
     }
 
     .container {
-      max-width: 760px;
+      max-width: 900px;
       margin: 0 auto;
-      padding: 32px 20px 80px;
+      padding: 24px;
     }
 
-    .header {
-      margin-bottom: 32px;
-    }
-
-    .logo {
-      font-size: 28px;
-      font-weight: 800;
+    h1 {
       margin-bottom: 8px;
     }
 
     .subtitle {
-      color: #6b7280;
-      font-size: 15px;
-      line-height: 1.6;
+      color: #666;
+      margin-bottom: 24px;
     }
 
     .section {
-      margin-bottom: 32px;
-    }
-
-    .section-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 14px;
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
     }
 
     .stocks {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .stock {
-      background: white;
-      border: 1px solid #e5e7eb;
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      background: #eef1f5;
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    .stock:hover {
+      background: #dfe5ec;
+    }
+
+    .stock.active {
+      background: #222;
+      color: white;
     }
 
     .delete-stock {
       border: none;
       background: transparent;
-      color: #999;
       cursor: pointer;
-      font-size: 14px;
-      padding: 0;
+      font-size: 16px;
+      color: inherit;
     }
 
     .add-stock {
-      background: #16181d;
-      color: white;
       border: none;
-      padding: 10px 14px;
+      background: #2563eb;
+      color: white;
       border-radius: 999px;
-      font-size: 14px;
-      font-weight: 600;
+      padding: 9px 14px;
       cursor: pointer;
     }
 
     .news-card {
       background: white;
-      border-radius: 18px;
-      padding: 20px;
+      border-radius: 14px;
+      padding: 18px;
       margin-bottom: 14px;
-      border: 1px solid #eaecf0;
-    }
-
-    .news-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
     }
 
     .news-title {
-      font-size: 17px;
-      line-height: 1.5;
-      font-weight: 700;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      line-height: 1.4;
     }
 
-    .new-badge {
-      background: #ffe5e5;
-      color: #d92d20;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 5px 8px;
-      border-radius: 999px;
-      white-space: nowrap;
+    .news-title a {
+      color: #111;
+      text-decoration: none;
+    }
+
+    .news-title a:hover {
+      text-decoration: underline;
+    }
+
+    .news-description {
+      color: #555;
+      line-height: 1.5;
+      margin-bottom: 10px;
     }
 
     .news-meta {
-      margin-top: 10px;
-      color: #8a9099;
+      color: #888;
       font-size: 13px;
     }
 
-    .tags {
-      margin-top: 14px;
-      display: flex;
-      gap: 7px;
-      flex-wrap: wrap;
-    }
-
-    .tag {
-      background: #f2f4f7;
-      padding: 6px 9px;
-      border-radius: 8px;
-      font-size: 12px;
-      color: #555d68;
+    .loading,
+    .message {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      color: #666;
     }
   </style>
 </head>
 
 <body>
-
   <div class="container">
 
-    <header class="header">
-      <div class="logo">Stock News</div>
-      <div class="subtitle">
-        내가 투자하는 종목의 중요한 뉴스를 한곳에서 확인하세요.
-      </div>
-    </header>
+    <h1>📈 Stock News</h1>
+    <div class="subtitle">
+      관심 종목의 최신 뉴스를 확인하세요.
+    </div>
 
-
-    <section class="section">
-
-      <div class="section-title">
-        내 종목
-      </div>
+    <div class="section">
+      <h2>내 종목</h2>
 
       <div class="stocks" id="stockList">
-
         <button class="add-stock" id="addStockButton">
           + 종목 추가
         </button>
-
       </div>
+    </div>
 
-    </section>
+    <h2 id="newsHeading">최신 뉴스</h2>
 
-
-    <section class="section">
-
-      <div class="section-title">
-        최신 뉴스
+    <div id="newsList">
+      <div class="message">
+        종목을 눌러 뉴스를 불러오세요.
       </div>
-
-      <div class="news-card">
-        <div class="news-top">
-
-          <div class="news-title">
-            삼성전자, 차세대 HBM 공급 확대 논의
-          </div>
-
-          <div class="new-badge">
-            NEW
-          </div>
-
-        </div>
-
-        <div class="news-meta">
-          연합뉴스 · 20분 전
-        </div>
-
-        <div class="tags">
-          <span class="tag">삼성전자</span>
-          <span class="tag">HBM</span>
-          <span class="tag">AI 반도체</span>
-        </div>
-      </div>
-
-    </section>
+    </div>
 
   </div>
 
-
   <script>
-
-    const addButton =
-      document.getElementById("addStockButton");
-
-    const stockList =
-      document.getElementById("stockList");
-
+    const addButton = document.getElementById("addStockButton");
+    const stockList = document.getElementById("stockList");
+    const newsList = document.getElementById("newsList");
+    const newsHeading = document.getElementById("newsHeading");
 
     let stocks =
       JSON.parse(localStorage.getItem("stocks")) || [
@@ -223,101 +163,158 @@
         "현대차"
       ];
 
+    let selectedStock = null;
 
     function saveStocks() {
-
-      localStorage.setItem(
-        "stocks",
-        JSON.stringify(stocks)
-      );
-
+      localStorage.setItem("stocks", JSON.stringify(stocks));
     }
 
-
     function renderStocks() {
-
-      const existingStocks =
-        document.querySelectorAll(".stock");
-
+      const existingStocks = document.querySelectorAll(".stock");
       existingStocks.forEach(function(stock) {
         stock.remove();
       });
 
-
       stocks.forEach(function(stockName, index) {
-
-        const stock =
-          document.createElement("div");
-
+        const stock = document.createElement("div");
         stock.className = "stock";
 
+        if (selectedStock === stockName) {
+          stock.classList.add("active");
+        }
 
-        const name =
-          document.createElement("span");
-
+        const name = document.createElement("span");
         name.textContent = stockName;
 
+        name.addEventListener("click", function() {
+          selectedStock = stockName;
+          renderStocks();
+          loadNews(stockName);
+        });
 
-        const deleteButton =
-          document.createElement("button");
-
+        const deleteButton = document.createElement("button");
         deleteButton.className = "delete-stock";
         deleteButton.textContent = "×";
 
+        deleteButton.addEventListener("click", function(event) {
+          event.stopPropagation();
 
-        deleteButton.addEventListener(
-          "click",
-          function() {
+          stocks.splice(index, 1);
+          saveStocks();
 
-            stocks.splice(index, 1);
-
-            saveStocks();
-
-            renderStocks();
-
+          if (selectedStock === stockName) {
+            selectedStock = null;
+            newsHeading.textContent = "최신 뉴스";
+            newsList.innerHTML =
+              '<div class="message">종목을 눌러 뉴스를 불러오세요.</div>';
           }
-        );
 
+          renderStocks();
+        });
 
         stock.appendChild(name);
-
         stock.appendChild(deleteButton);
 
-        stockList.insertBefore(
-          stock,
-          addButton
-        );
-
+        stockList.insertBefore(stock, addButton);
       });
-
     }
 
+    addButton.addEventListener("click", function() {
+      const stockName = prompt("추가할 종목 이름을 입력하세요.");
 
-    addButton.addEventListener(
-      "click",
-      function() {
+      if (!stockName) return;
 
-        const stockName =
-          prompt("추가할 종목 이름을 입력하세요.");
+      stocks.push(stockName.trim());
+      saveStocks();
+      renderStocks();
+    });
 
-        if (!stockName) {
-          return;
+    async function loadNews(stockName) {
+      newsHeading.textContent = stockName + " 최신 뉴스";
+
+      newsList.innerHTML =
+        '<div class="loading">뉴스를 불러오는 중...</div>';
+
+      try {
+        const response = await fetch(
+          "/api/news?q=" + encodeURIComponent(stockName)
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error("뉴스 API 호출 실패");
         }
 
+        renderNews(data.items || []);
 
-        stocks.push(stockName);
+      } catch (error) {
+        newsList.innerHTML =
+          '<div class="message">뉴스를 불러오지 못했습니다.</div>';
 
-        saveStocks();
-
-        renderStocks();
-
+        console.error(error);
       }
-    );
+    }
 
+    function renderNews(items) {
+      newsList.innerHTML = "";
+
+      if (items.length === 0) {
+        newsList.innerHTML =
+          '<div class="message">검색된 뉴스가 없습니다.</div>';
+        return;
+      }
+
+      items.forEach(function(item) {
+        const card = document.createElement("div");
+        card.className = "news-card";
+
+        const title = removeHtmlTags(item.title);
+        const description = removeHtmlTags(item.description);
+
+        card.innerHTML = `
+          <div class="news-title">
+            <a
+              href="${item.originallink || item.link}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              ${title}
+            </a>
+          </div>
+
+          <div class="news-description">
+            ${description}
+          </div>
+
+          <div class="news-meta">
+            ${formatDate(item.pubDate)}
+          </div>
+        `;
+
+        newsList.appendChild(card);
+      });
+    }
+
+    function removeHtmlTags(text) {
+      const temp = document.createElement("div");
+      temp.innerHTML = text || "";
+      return temp.textContent || temp.innerText || "";
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+
+      return date.toLocaleString("ko-KR", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
 
     renderStocks();
-
   </script>
-
 </body>
 </html>

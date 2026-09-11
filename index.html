@@ -1,73 +1,301 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Stock News</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Stock News</title>
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 700px;
-      margin: 40px auto;
-      padding: 20px;
-      background: #f5f5f5;
+    * {
+      box-sizing: border-box;
     }
 
-    .card {
-      background: white;
-      padding: 20px;
-      margin-bottom: 15px;
-      border-radius: 12px;
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, Arial, sans-serif;
+      background: #f6f7f9;
+      color: #16181d;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    .header {
+      margin-bottom: 32px;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .section {
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .stocks {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     .stock {
-      display: inline-block;
-      background: #eee;
-      padding: 8px 12px;
-      margin-right: 8px;
-      border-radius: 20px;
+      background: white;
+      border: 1px solid #e5e7eb;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .add-stock {
+      background: #16181d;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .news-card {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 14px;
+      border: 1px solid #eaecf0;
+    }
+
+    .news-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
     }
 
     .news-title {
-      font-size: 18px;
-      font-weight: bold;
+      font-size: 17px;
+      line-height: 1.5;
+      font-weight: 700;
     }
 
-    .news-info {
-      color: #777;
-      margin-top: 8px;
+    .new-badge {
+      background: #ffe5e5;
+      color: #d92d20;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
     }
+
+    .news-meta {
+      margin-top: 10px;
+      color: #8a9099;
+      font-size: 13px;
+    }
+
+    .tags {
+      margin-top: 14px;
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      background: #f2f4f7;
+      padding: 6px 9px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #555d68;
+    }
+
+    .important {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #f0f1f3;
+      color: #555d68;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 24px 16px 60px;
+      }
+
+      .logo {
+        font-size: 25px;
+      }
+
+      .news-card {
+        padding: 17px;
+      }
+
+      .news-title {
+        font-size: 16px;
+      }
+    }
+
   </style>
 </head>
 
 <body>
-  <h1>📈 My Stock News</h1>
 
-  <div class="card">
-    <h2>관심 종목</h2>
-    <span class="stock">삼성전자</span>
-    <span class="stock">SK하이닉스</span>
-    <span class="stock">현대차</span>
+  <div class="container">
+
+    <header class="header">
+
+      <div class="logo">
+        Stock News
+      </div>
+
+      <div class="subtitle">
+        내가 투자하는 종목의 중요한 뉴스를 한곳에서 확인하세요.
+      </div>
+
+    </header>
+
+
+    <section class="section">
+
+      <div class="section-title">
+        내 종목
+      </div>
+
+      <div class="stocks">
+
+        <div class="stock">
+          삼성전자
+        </div>
+
+        <div class="stock">
+          SK하이닉스
+        </div>
+
+        <div class="stock">
+          현대차
+        </div>
+
+        <button class="add-stock">
+          + 종목 추가
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <section class="section">
+
+      <div class="section-title">
+        최신 뉴스
+      </div>
+
+
+      <div class="news-card">
+
+        <div class="news-top">
+
+          <div class="news-title">
+            삼성전자, 차세대 HBM 공급 확대 논의
+          </div>
+
+          <div class="new-badge">
+            NEW
+          </div>
+
+        </div>
+
+        <div class="news-meta">
+          연합뉴스 · 20분 전
+        </div>
+
+        <div class="tags">
+          <span class="tag">삼성전자</span>
+          <span class="tag">HBM</span>
+          <span class="tag">AI 반도체</span>
+        </div>
+
+        <div class="important">
+          AI 반도체 시장 확대와 관련된 뉴스입니다.
+          향후 HBM 공급 확대 여부가 주요 관심 포인트입니다.
+        </div>
+
+      </div>
+
+
+      <div class="news-card">
+
+        <div class="news-top">
+
+          <div class="news-title">
+            SK하이닉스, AI 메모리 생산 투자 확대
+          </div>
+
+        </div>
+
+        <div class="news-meta">
+          한국경제 · 1시간 전
+        </div>
+
+        <div class="tags">
+          <span class="tag">SK하이닉스</span>
+          <span class="tag">AI</span>
+          <span class="tag">메모리</span>
+        </div>
+
+        <div class="important">
+          AI 서버용 메모리 수요 증가와 관련된 투자 확대 소식입니다.
+        </div>
+
+      </div>
+
+
+      <div class="news-card">
+
+        <div class="news-top">
+
+          <div class="news-title">
+            현대차, 북미 전기차 판매 확대
+          </div>
+
+        </div>
+
+        <div class="news-meta">
+          매일경제 · 3시간 전
+        </div>
+
+        <div class="tags">
+          <span class="tag">현대차</span>
+          <span class="tag">전기차</span>
+          <span class="tag">미국</span>
+        </div>
+
+      </div>
+
+    </section>
+
   </div>
 
-  <h2>최신 뉴스</h2>
-
-  <div class="card">
-    <div class="news-title">
-      삼성전자, 차세대 HBM 공급 확대
-    </div>
-    <div class="news-info">
-      연합뉴스 · 20분 전
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="news-title">
-      SK하이닉스, AI 반도체 투자 확대
-    </div>
-    <div class="news-info">
-      한국경제 · 1시간 전
-    </div>
-  </div>
 </body>
 </html>

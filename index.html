@@ -79,6 +79,14 @@
       cursor: pointer;
     }
 
+    .all-stock {
+      background: #222;
+      color: white;
+      padding: 9px 13px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
     .toolbar {
       display: flex;
       justify-content: space-between;
@@ -106,6 +114,7 @@
       display: flex;
       gap: 7px;
       margin-bottom: 8px;
+      flex-wrap: wrap;
     }
 
     .stock-badge {
@@ -123,6 +132,12 @@
       padding: 4px 8px;
       border-radius: 7px;
       font-size: 12px;
+      font-weight: bold;
+    }
+
+    .source-badge.global {
+      background: #eef2ff;
+      color: #4338ca;
     }
 
     .news-title {
@@ -135,6 +150,10 @@
     .news-title a {
       color: #111;
       text-decoration: none;
+    }
+
+    .news-title a:hover {
+      text-decoration: underline;
     }
 
     .news-description {
@@ -153,14 +172,6 @@
       padding: 25px;
       border-radius: 14px;
       color: #666;
-    }
-
-    .all-stock {
-      background: #222;
-      color: white;
-      padding: 9px 13px;
-      border-radius: 999px;
-      cursor: pointer;
     }
   </style>
 </head>
@@ -209,11 +220,9 @@
   </div>
 
   <div id="newsList">
-
     <div class="message">
       뉴스를 불러오는 중...
     </div>
-
   </div>
 
 </div>
@@ -245,12 +254,11 @@ let stocks =
   [
     "삼성전자",
     "SK하이닉스",
-    "현대차"
+    "Curiox"
   ];
 
 
 let selectedStock = "ALL";
-
 
 
 function saveStocks() {
@@ -261,7 +269,6 @@ function saveStocks() {
   );
 
 }
-
 
 
 function renderStocks() {
@@ -347,7 +354,6 @@ function renderStocks() {
 }
 
 
-
 addButton.addEventListener(
   "click",
   function() {
@@ -390,7 +396,6 @@ addButton.addEventListener(
 );
 
 
-
 allStockButton.addEventListener(
   "click",
   function() {
@@ -403,7 +408,6 @@ allStockButton.addEventListener(
 
   }
 );
-
 
 
 refreshButton.addEventListener(
@@ -424,7 +428,6 @@ refreshButton.addEventListener(
 
   }
 );
-
 
 
 async function fetchNews(stockName) {
@@ -462,7 +465,6 @@ async function fetchNews(stockName) {
   );
 
 }
-
 
 
 async function loadAllNews() {
@@ -530,7 +532,6 @@ async function loadAllNews() {
 }
 
 
-
 async function loadSingleStock(stockName) {
 
   newsHeading.textContent =
@@ -545,6 +546,18 @@ async function loadSingleStock(stockName) {
 
     const items =
       await fetchNews(stockName);
+
+
+    items.sort(
+      function(a, b) {
+
+        return (
+          new Date(b.pubDate) -
+          new Date(a.pubDate)
+        );
+
+      }
+    );
 
 
     renderNews(items);
@@ -563,7 +576,6 @@ async function loadSingleStock(stockName) {
 }
 
 
-
 function removeDuplicates(items) {
 
   const seen =
@@ -574,7 +586,6 @@ function removeDuplicates(items) {
     function(item) {
 
       const key =
-        item.originallink ||
         item.link ||
         removeHtmlTags(item.title);
 
@@ -594,7 +605,6 @@ function removeDuplicates(items) {
   );
 
 }
-
 
 
 function renderNews(items) {
@@ -636,8 +646,29 @@ function renderNews(items) {
 
 
       const link =
-        item.originallink ||
-        item.link;
+        item.link || "#";
+
+
+      let sourceText = "NAVER";
+      let sourceClass = "source-badge";
+
+
+      if (item.source === "GLOBAL") {
+
+        sourceClass += " global";
+
+        sourceText =
+          "GLOBAL";
+
+        if (item.sourceName) {
+
+          sourceText +=
+            " · " +
+            item.sourceName;
+
+        }
+
+      }
 
 
       card.innerHTML = `
@@ -645,11 +676,11 @@ function renderNews(items) {
         <div class="news-top">
 
           <span class="stock-badge">
-            ${item.stock}
+            ${escapeHtml(item.stock)}
           </span>
 
-          <span class="source-badge">
-            NAVER
+          <span class="${sourceClass}">
+            ${escapeHtml(sourceText)}
           </span>
 
         </div>
@@ -658,11 +689,11 @@ function renderNews(items) {
         <div class="news-title">
 
           <a
-            href="${link}"
+            href="${escapeAttribute(link)}"
             target="_blank"
             rel="noopener noreferrer"
           >
-            ${title}
+            ${escapeHtml(title)}
           </a>
 
         </div>
@@ -670,7 +701,7 @@ function renderNews(items) {
 
         <div class="news-description">
 
-          ${description}
+          ${escapeHtml(description)}
 
         </div>
 
@@ -692,7 +723,6 @@ function renderNews(items) {
 }
 
 
-
 function removeHtmlTags(text) {
 
   const temp =
@@ -712,11 +742,48 @@ function removeHtmlTags(text) {
 }
 
 
+function escapeHtml(text) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent =
+    text || "";
+
+  return div.innerHTML;
+
+}
+
+
+function escapeAttribute(text) {
+
+  return String(text || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+
+}
+
 
 function formatDate(dateString) {
 
+  if (!dateString) {
+
+    return "날짜 정보 없음";
+
+  }
+
+
   const date =
     new Date(dateString);
+
+
+  if (isNaN(date.getTime())) {
+
+    return dateString;
+
+  }
 
 
   return date.toLocaleString(
@@ -730,7 +797,6 @@ function formatDate(dateString) {
   );
 
 }
-
 
 
 renderStocks();

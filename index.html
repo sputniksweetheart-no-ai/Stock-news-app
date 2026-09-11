@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>My Stock News</title>
 
   <style>
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -48,13 +54,8 @@
       align-items: center;
       gap: 7px;
       background: #eef1f5;
-      padding: 9px 13px;
+      padding: 9px 12px;
       border-radius: 999px;
-      cursor: pointer;
-    }
-
-    .stock:hover {
-      background: #dde3ea;
     }
 
     .stock.active {
@@ -62,12 +63,18 @@
       color: white;
     }
 
-    .delete-stock {
+    .stock-name {
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .stock-button {
       border: none;
       background: transparent;
       color: inherit;
       cursor: pointer;
-      font-size: 16px;
+      padding: 0;
+      font-size: 15px;
     }
 
     .add-stock {
@@ -87,10 +94,18 @@
       cursor: pointer;
     }
 
+    .keyword-info {
+      color: #777;
+      font-size: 13px;
+      margin-top: 15px;
+      line-height: 1.5;
+    }
+
     .toolbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
       margin-bottom: 15px;
     }
 
@@ -101,6 +116,7 @@
       padding: 9px 14px;
       border-radius: 9px;
       cursor: pointer;
+      white-space: nowrap;
     }
 
     .news-card {
@@ -140,6 +156,14 @@
       color: #4338ca;
     }
 
+    .keyword-badge {
+      background: #fff4df;
+      color: #a15c00;
+      padding: 4px 8px;
+      border-radius: 7px;
+      font-size: 12px;
+    }
+
     .news-title {
       font-size: 18px;
       font-weight: bold;
@@ -173,36 +197,134 @@
       border-radius: 14px;
       color: #666;
     }
+
+    /* 설정창 */
+
+    .modal-background {
+      display: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.45);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      z-index: 1000;
+    }
+
+    .modal-background.show {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      width: 100%;
+      max-width: 500px;
+      padding: 24px;
+      border-radius: 18px;
+      box-sizing: border-box;
+    }
+
+    .modal h2 {
+      margin-top: 0;
+    }
+
+    .modal-description {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .keyword-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .cancel-button {
+      border: none;
+      background: #eee;
+      padding: 10px 16px;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+
+    .save-button {
+      border: none;
+      background: #2563eb;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+
   </style>
+
 </head>
+
 
 <body>
 
 <div class="container">
 
-  <h1>📈 My Stock News</h1>
+  <h1>
+    📈 My Stock News
+  </h1>
 
   <div class="subtitle">
-    내 관심 종목의 최신 뉴스를 한 번에
+    내 관심 종목과 관련 키워드의 뉴스를 한 번에
   </div>
+
 
   <div class="section">
 
-    <h2>내 종목</h2>
+    <h2>
+      내 종목
+    </h2>
 
-    <div class="stocks" id="stockList">
+    <div
+      class="stocks"
+      id="stockList"
+    >
 
-      <div class="all-stock" id="allStockButton">
+      <div
+        class="all-stock"
+        id="allStockButton"
+      >
         전체
       </div>
 
-      <button class="add-stock" id="addStockButton">
+      <button
+        class="add-stock"
+        id="addStockButton"
+      >
         + 종목 추가
       </button>
 
     </div>
 
+
+    <div class="keyword-info">
+      ⚙️ 버튼을 눌러 종목별 관련 키워드를 설정할 수 있습니다.
+      검색량 절약을 위해 종목당 앞의 2개 키워드까지 뉴스 검색에 사용합니다.
+    </div>
+
   </div>
+
 
   <div class="toolbar">
 
@@ -219,13 +341,68 @@
 
   </div>
 
+
   <div id="newsList">
+
     <div class="message">
       뉴스를 불러오는 중...
     </div>
+
   </div>
 
 </div>
+
+
+
+<!-- 키워드 설정창 -->
+
+<div
+  class="modal-background"
+  id="keywordModal"
+>
+
+  <div class="modal">
+
+    <h2 id="modalTitle">
+      관련 키워드 설정
+    </h2>
+
+    <div class="modal-description">
+      쉼표(,)로 구분해서 입력하세요.<br><br>
+
+      예:<br>
+      HBM, NVIDIA, 파운드리
+    </div>
+
+    <input
+      type="text"
+      class="keyword-input"
+      id="keywordInput"
+      placeholder="예: HBM, NVIDIA"
+    >
+
+    <div class="modal-buttons">
+
+      <button
+        class="cancel-button"
+        id="cancelKeywordButton"
+      >
+        취소
+      </button>
+
+      <button
+        class="save-button"
+        id="saveKeywordButton"
+      >
+        저장
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
 
 
 <script>
@@ -248,17 +425,64 @@ const refreshButton =
 const allStockButton =
   document.getElementById("allStockButton");
 
+const keywordModal =
+  document.getElementById("keywordModal");
+
+const keywordInput =
+  document.getElementById("keywordInput");
+
+const modalTitle =
+  document.getElementById("modalTitle");
+
+const cancelKeywordButton =
+  document.getElementById("cancelKeywordButton");
+
+const saveKeywordButton =
+  document.getElementById("saveKeywordButton");
+
+
+
+/*
+  종목 목록
+
+  기존에 저장되어 있던
+  삼성전자 / SK하이닉스 / Curiox 목록을
+  그대로 사용한다.
+*/
 
 let stocks =
-  JSON.parse(localStorage.getItem("stocks")) ||
-  [
+  JSON.parse(
+    localStorage.getItem("stocks")
+  ) || [
     "삼성전자",
     "SK하이닉스",
     "Curiox"
   ];
 
 
+
+/*
+  종목별 관련 키워드
+
+  예:
+
+  {
+    "삼성전자": ["HBM", "NVIDIA"],
+    "Curiox": ["cell analysis"]
+  }
+*/
+
+let stockKeywords =
+  JSON.parse(
+    localStorage.getItem("stockKeywords")
+  ) || {};
+
+
+
 let selectedStock = "ALL";
+
+let editingStock = null;
+
 
 
 function saveStocks() {
@@ -271,87 +495,190 @@ function saveStocks() {
 }
 
 
+
+function saveKeywords() {
+
+  localStorage.setItem(
+    "stockKeywords",
+    JSON.stringify(stockKeywords)
+  );
+
+}
+
+
+
 function renderStocks() {
 
   document
     .querySelectorAll(".stock")
     .forEach(function(element) {
+
       element.remove();
+
     });
 
 
-  stocks.forEach(function(stockName, index) {
+  stocks.forEach(
+    function(stockName, index) {
 
-    const stock =
-      document.createElement("div");
+      const stock =
+        document.createElement("div");
 
-    stock.className = "stock";
+      stock.className = "stock";
 
 
-    if (selectedStock === stockName) {
-      stock.classList.add("active");
+      if (
+        selectedStock === stockName
+      ) {
+
+        stock.classList.add(
+          "active"
+        );
+
+      }
+
+
+      /*
+        종목 이름
+      */
+
+      const name =
+        document.createElement("span");
+
+      name.className =
+        "stock-name";
+
+      name.textContent =
+        stockName;
+
+
+      name.addEventListener(
+        "click",
+        function() {
+
+          selectedStock =
+            stockName;
+
+          renderStocks();
+
+          loadSingleStock(
+            stockName
+          );
+
+        }
+      );
+
+
+      /*
+        키워드 설정 버튼
+      */
+
+      const settingsButton =
+        document.createElement("button");
+
+      settingsButton.className =
+        "stock-button";
+
+      settingsButton.textContent =
+        "⚙️";
+
+      settingsButton.title =
+        "관련 키워드 설정";
+
+
+      settingsButton.addEventListener(
+        "click",
+        function(event) {
+
+          event.stopPropagation();
+
+          openKeywordModal(
+            stockName
+          );
+
+        }
+      );
+
+
+      /*
+        삭제 버튼
+      */
+
+      const deleteButton =
+        document.createElement("button");
+
+      deleteButton.className =
+        "stock-button";
+
+      deleteButton.textContent =
+        "×";
+
+
+      deleteButton.addEventListener(
+        "click",
+        function(event) {
+
+          event.stopPropagation();
+
+
+          stocks.splice(
+            index,
+            1
+          );
+
+
+          delete stockKeywords[
+            stockName
+          ];
+
+
+          saveStocks();
+
+          saveKeywords();
+
+
+          if (
+            selectedStock ===
+            stockName
+          ) {
+
+            selectedStock =
+              "ALL";
+
+          }
+
+
+          renderStocks();
+
+          loadAllNews();
+
+        }
+      );
+
+
+      stock.appendChild(
+        name
+      );
+
+      stock.appendChild(
+        settingsButton
+      );
+
+      stock.appendChild(
+        deleteButton
+      );
+
+
+      stockList.insertBefore(
+        stock,
+        addButton
+      );
+
     }
-
-
-    const name =
-      document.createElement("span");
-
-    name.textContent = stockName;
-
-
-    name.addEventListener(
-      "click",
-      function() {
-
-        selectedStock = stockName;
-
-        renderStocks();
-
-        loadSingleStock(stockName);
-
-      }
-    );
-
-
-    const deleteButton =
-      document.createElement("button");
-
-    deleteButton.className =
-      "delete-stock";
-
-    deleteButton.textContent = "×";
-
-
-    deleteButton.addEventListener(
-      "click",
-      function(event) {
-
-        event.stopPropagation();
-
-        stocks.splice(index, 1);
-
-        saveStocks();
-
-        renderStocks();
-
-        loadAllNews();
-
-      }
-    );
-
-
-    stock.appendChild(name);
-
-    stock.appendChild(deleteButton);
-
-    stockList.insertBefore(
-      stock,
-      addButton
-    );
-
-  });
+  );
 
 }
+
 
 
 addButton.addEventListener(
@@ -364,15 +691,28 @@ addButton.addEventListener(
       );
 
 
-    if (!stockName) return;
+    if (!stockName) {
+
+      return;
+
+    }
 
 
     const cleanName =
       stockName.trim();
 
 
+    if (!cleanName) {
+
+      return;
+
+    }
+
+
     if (
-      stocks.includes(cleanName)
+      stocks.includes(
+        cleanName
+      )
     ) {
 
       alert(
@@ -384,7 +724,10 @@ addButton.addEventListener(
     }
 
 
-    stocks.push(cleanName);
+    stocks.push(
+      cleanName
+    );
+
 
     saveStocks();
 
@@ -396,11 +739,170 @@ addButton.addEventListener(
 );
 
 
+
+/*
+  키워드 설정창 열기
+*/
+
+function openKeywordModal(
+  stockName
+) {
+
+  editingStock =
+    stockName;
+
+
+  modalTitle.textContent =
+    stockName +
+    " 관련 키워드";
+
+
+  const keywords =
+    stockKeywords[
+      stockName
+    ] || [];
+
+
+  keywordInput.value =
+    keywords.join(", ");
+
+
+  keywordModal.classList.add(
+    "show"
+  );
+
+
+  keywordInput.focus();
+
+}
+
+
+
+/*
+  설정 취소
+*/
+
+cancelKeywordButton.addEventListener(
+  "click",
+  function() {
+
+    closeKeywordModal();
+
+  }
+);
+
+
+
+/*
+  설정 저장
+*/
+
+saveKeywordButton.addEventListener(
+  "click",
+  function() {
+
+    if (!editingStock) {
+
+      return;
+
+    }
+
+
+    const keywords =
+      keywordInput.value
+        .split(",")
+        .map(function(keyword) {
+
+          return keyword.trim();
+
+        })
+        .filter(function(keyword) {
+
+          return keyword.length > 0;
+
+        });
+
+
+    /*
+      같은 키워드 중복 제거
+    */
+
+    const uniqueKeywords =
+      [...new Set(keywords)];
+
+
+    stockKeywords[
+      editingStock
+    ] =
+      uniqueKeywords;
+
+
+    saveKeywords();
+
+
+    closeKeywordModal();
+
+
+    if (
+      selectedStock ===
+      editingStock
+    ) {
+
+      loadSingleStock(
+        editingStock
+      );
+
+    } else {
+
+      loadAllNews();
+
+    }
+
+  }
+);
+
+
+
+function closeKeywordModal() {
+
+  keywordModal.classList.remove(
+    "show"
+  );
+
+  editingStock = null;
+
+}
+
+
+
+/*
+  배경을 누르면 닫기
+*/
+
+keywordModal.addEventListener(
+  "click",
+  function(event) {
+
+    if (
+      event.target ===
+      keywordModal
+    ) {
+
+      closeKeywordModal();
+
+    }
+
+  }
+);
+
+
+
 allStockButton.addEventListener(
   "click",
   function() {
 
-    selectedStock = "ALL";
+    selectedStock =
+      "ALL";
 
     renderStocks();
 
@@ -410,11 +912,15 @@ allStockButton.addEventListener(
 );
 
 
+
 refreshButton.addEventListener(
   "click",
   function() {
 
-    if (selectedStock === "ALL") {
+    if (
+      selectedStock ===
+      "ALL"
+    ) {
 
       loadAllNews();
 
@@ -430,19 +936,30 @@ refreshButton.addEventListener(
 );
 
 
-async function fetchNews(stockName) {
+
+/*
+  API에서 하나의 검색어를 검색
+*/
+
+async function fetchQuery(
+  query,
+  stockName,
+  matchedKeyword
+) {
 
   const response =
     await fetch(
       "/api/news?q=" +
-      encodeURIComponent(stockName)
+      encodeURIComponent(
+        query
+      )
     );
 
 
   if (!response.ok) {
 
     throw new Error(
-      stockName +
+      query +
       " 뉴스 호출 실패"
     );
 
@@ -453,12 +970,21 @@ async function fetchNews(stockName) {
     await response.json();
 
 
-  return (data.items || []).map(
+  return (
+    data.items || []
+  ).map(
     function(item) {
 
       return {
+
         ...item,
-        stock: stockName
+
+        stock:
+          stockName,
+
+        matchedKeyword:
+          matchedKeyword
+
       };
 
     }
@@ -467,9 +993,99 @@ async function fetchNews(stockName) {
 }
 
 
+
+/*
+  한 종목의 뉴스 가져오기
+
+  회사명 +
+  관련 키워드 최대 2개
+*/
+
+async function fetchStockNews(
+  stockName
+) {
+
+  const keywords =
+    (
+      stockKeywords[
+        stockName
+      ] || []
+    ).slice(
+      0,
+      2
+    );
+
+
+  const requests = [];
+
+
+  /*
+    회사명 검색
+  */
+
+  requests.push(
+
+    fetchQuery(
+      stockName,
+      stockName,
+      null
+    )
+
+  );
+
+
+  /*
+    관련 키워드 검색
+  */
+
+  keywords.forEach(
+    function(keyword) {
+
+      requests.push(
+
+        fetchQuery(
+          keyword,
+          stockName,
+          keyword
+        )
+
+      );
+
+    }
+  );
+
+
+  const results =
+    await Promise.all(
+      requests
+    );
+
+
+  let items =
+    results.flat();
+
+
+  items =
+    removeDuplicates(
+      items
+    );
+
+
+  return items;
+
+}
+
+
+
+/*
+  전체 종목 뉴스
+*/
+
 async function loadAllNews() {
 
-  selectedStock = "ALL";
+  selectedStock =
+    "ALL";
+
 
   renderStocks();
 
@@ -479,21 +1095,39 @@ async function loadAllNews() {
 
 
   newsList.innerHTML =
-    '<div class="message">내 종목 뉴스를 모으는 중...</div>';
+    '<div class="message">내 종목과 관련 키워드 뉴스를 모으는 중...</div>';
+
+
+  if (
+    stocks.length === 0
+  ) {
+
+    newsList.innerHTML =
+      '<div class="message">등록된 종목이 없습니다.</div>';
+
+    return;
+
+  }
 
 
   try {
 
     const requests =
-      stocks.map(function(stock) {
+      stocks.map(
+        function(stock) {
 
-        return fetchNews(stock);
+          return fetchStockNews(
+            stock
+          );
 
-      });
+        }
+      );
 
 
     const results =
-      await Promise.all(requests);
+      await Promise.all(
+        requests
+      );
 
 
     let allNews =
@@ -501,27 +1135,26 @@ async function loadAllNews() {
 
 
     allNews =
-      removeDuplicates(allNews);
+      removeDuplicates(
+        allNews
+      );
 
 
     allNews.sort(
-      function(a, b) {
-
-        return (
-          new Date(b.pubDate) -
-          new Date(a.pubDate)
-        );
-
-      }
+      sortByDate
     );
 
 
-    renderNews(allNews);
+    renderNews(
+      allNews
+    );
 
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      error
+    );
 
 
     newsList.innerHTML =
@@ -532,10 +1165,18 @@ async function loadAllNews() {
 }
 
 
-async function loadSingleStock(stockName) {
+
+/*
+  한 종목 뉴스
+*/
+
+async function loadSingleStock(
+  stockName
+) {
 
   newsHeading.textContent =
-    stockName + " 최신 뉴스";
+    stockName +
+    " 최신 뉴스";
 
 
   newsList.innerHTML =
@@ -545,27 +1186,26 @@ async function loadSingleStock(stockName) {
   try {
 
     const items =
-      await fetchNews(stockName);
+      await fetchStockNews(
+        stockName
+      );
 
 
     items.sort(
-      function(a, b) {
-
-        return (
-          new Date(b.pubDate) -
-          new Date(a.pubDate)
-        );
-
-      }
+      sortByDate
     );
 
 
-    renderNews(items);
+    renderNews(
+      items
+    );
 
 
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      error
+    );
 
 
     newsList.innerHTML =
@@ -576,7 +1216,43 @@ async function loadSingleStock(stockName) {
 }
 
 
-function removeDuplicates(items) {
+
+/*
+  날짜 최신순
+*/
+
+function sortByDate(
+  a,
+  b
+) {
+
+  const dateA =
+    new Date(
+      a.pubDate
+    ).getTime();
+
+  const dateB =
+    new Date(
+      b.pubDate
+    ).getTime();
+
+
+  return (
+    (dateB || 0) -
+    (dateA || 0)
+  );
+
+}
+
+
+
+/*
+  중복 기사 제거
+*/
+
+function removeDuplicates(
+  items
+) {
 
   const seen =
     new Set();
@@ -585,12 +1261,22 @@ function removeDuplicates(items) {
   return items.filter(
     function(item) {
 
+      const title =
+        removeHtmlTags(
+          item.title
+        )
+        .toLowerCase()
+        .trim();
+
+
       const key =
         item.link ||
-        removeHtmlTags(item.title);
+        title;
 
 
-      if (seen.has(key)) {
+      if (
+        seen.has(key)
+      ) {
 
         return false;
 
@@ -607,12 +1293,22 @@ function removeDuplicates(items) {
 }
 
 
-function renderNews(items) {
 
-  newsList.innerHTML = "";
+/*
+  뉴스 카드 출력
+*/
+
+function renderNews(
+  items
+) {
+
+  newsList.innerHTML =
+    "";
 
 
-  if (items.length === 0) {
+  if (
+    items.length === 0
+  ) {
 
     newsList.innerHTML =
       '<div class="message">뉴스가 없습니다.</div>';
@@ -626,96 +1322,212 @@ function renderNews(items) {
     function(item) {
 
       const card =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
 
       card.className =
         "news-card";
 
 
-      const title =
+      /*
+        상단 배지
+      */
+
+      const top =
+        document.createElement(
+          "div"
+        );
+
+      top.className =
+        "news-top";
+
+
+      const stockBadge =
+        document.createElement(
+          "span"
+        );
+
+      stockBadge.className =
+        "stock-badge";
+
+      stockBadge.textContent =
+        item.stock;
+
+
+      top.appendChild(
+        stockBadge
+      );
+
+
+      const sourceBadge =
+        document.createElement(
+          "span"
+        );
+
+
+      if (
+        item.source ===
+        "GLOBAL"
+      ) {
+
+        sourceBadge.className =
+          "source-badge global";
+
+
+        sourceBadge.textContent =
+          item.sourceName
+            ?
+            "GLOBAL · " +
+            item.sourceName
+            :
+            "GLOBAL";
+
+      } else {
+
+        sourceBadge.className =
+          "source-badge";
+
+        sourceBadge.textContent =
+          "NAVER";
+
+      }
+
+
+      top.appendChild(
+        sourceBadge
+      );
+
+
+      /*
+        어떤 관련 키워드로
+        발견된 뉴스인지 표시
+      */
+
+      if (
+        item.matchedKeyword
+      ) {
+
+        const keywordBadge =
+          document.createElement(
+            "span"
+          );
+
+        keywordBadge.className =
+          "keyword-badge";
+
+        keywordBadge.textContent =
+          item.matchedKeyword;
+
+
+        top.appendChild(
+          keywordBadge
+        );
+
+      }
+
+
+      /*
+        뉴스 제목
+      */
+
+      const titleBox =
+        document.createElement(
+          "div"
+        );
+
+      titleBox.className =
+        "news-title";
+
+
+      const link =
+        document.createElement(
+          "a"
+        );
+
+
+      link.textContent =
         removeHtmlTags(
           item.title
         );
 
 
+      link.href =
+        safeUrl(
+          item.link
+        );
+
+
+      link.target =
+        "_blank";
+
+
+      link.rel =
+        "noopener noreferrer";
+
+
+      titleBox.appendChild(
+        link
+      );
+
+
+      /*
+        뉴스 설명
+      */
+
       const description =
+        document.createElement(
+          "div"
+        );
+
+      description.className =
+        "news-description";
+
+      description.textContent =
         removeHtmlTags(
           item.description
         );
 
 
-      const link =
-        item.link || "#";
+      /*
+        날짜
+      */
+
+      const meta =
+        document.createElement(
+          "div"
+        );
+
+      meta.className =
+        "news-meta";
+
+      meta.textContent =
+        formatDate(
+          item.pubDate
+        );
 
 
-      let sourceText = "NAVER";
-      let sourceClass = "source-badge";
+      card.appendChild(
+        top
+      );
+
+      card.appendChild(
+        titleBox
+      );
+
+      card.appendChild(
+        description
+      );
+
+      card.appendChild(
+        meta
+      );
 
 
-      if (item.source === "GLOBAL") {
-
-        sourceClass += " global";
-
-        sourceText =
-          "GLOBAL";
-
-        if (item.sourceName) {
-
-          sourceText +=
-            " · " +
-            item.sourceName;
-
-        }
-
-      }
-
-
-      card.innerHTML = `
-
-        <div class="news-top">
-
-          <span class="stock-badge">
-            ${escapeHtml(item.stock)}
-          </span>
-
-          <span class="${sourceClass}">
-            ${escapeHtml(sourceText)}
-          </span>
-
-        </div>
-
-
-        <div class="news-title">
-
-          <a
-            href="${escapeAttribute(link)}"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ${escapeHtml(title)}
-          </a>
-
-        </div>
-
-
-        <div class="news-description">
-
-          ${escapeHtml(description)}
-
-        </div>
-
-
-        <div class="news-meta">
-
-          ${formatDate(item.pubDate)}
-
-        </div>
-
-      `;
-
-
-      newsList.appendChild(card);
+      newsList.appendChild(
+        card
+      );
 
     }
   );
@@ -723,10 +1535,19 @@ function renderNews(items) {
 }
 
 
-function removeHtmlTags(text) {
+
+/*
+  외부 뉴스 데이터의 HTML 제거
+*/
+
+function removeHtmlTags(
+  text
+) {
 
   const temp =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
 
 
   temp.innerHTML =
@@ -742,33 +1563,60 @@ function removeHtmlTags(text) {
 }
 
 
-function escapeHtml(text) {
 
-  const div =
-    document.createElement("div");
+/*
+  보안:
+  http / https 링크만 허용
 
-  div.textContent =
-    text || "";
+  외부 데이터에 이상한 링크가
+  들어오는 경우를 방지한다.
+*/
 
-  return div.innerHTML;
+function safeUrl(
+  url
+) {
+
+  try {
+
+    const parsed =
+      new URL(
+        url
+      );
+
+
+    if (
+      parsed.protocol ===
+      "https:" ||
+      parsed.protocol ===
+      "http:"
+    ) {
+
+      return url;
+
+    }
+
+  } catch (error) {
+
+  }
+
+
+  return "#";
 
 }
 
 
-function escapeAttribute(text) {
 
-  return String(text || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
+/*
+  날짜 표시
+*/
 
-}
+function formatDate(
+  dateString
+) {
 
-
-function formatDate(dateString) {
-
-  if (!dateString) {
+  if (
+    !dateString
+  ) {
 
     return "날짜 정보 없음";
 
@@ -776,10 +1624,16 @@ function formatDate(dateString) {
 
 
   const date =
-    new Date(dateString);
+    new Date(
+      dateString
+    );
 
 
-  if (isNaN(date.getTime())) {
+  if (
+    isNaN(
+      date.getTime()
+    )
+  ) {
 
     return dateString;
 
@@ -789,14 +1643,20 @@ function formatDate(dateString) {
   return date.toLocaleString(
     "ko-KR",
     {
+
       month: "short",
+
       day: "numeric",
+
       hour: "2-digit",
+
       minute: "2-digit"
+
     }
   );
 
 }
+
 
 
 renderStocks();
@@ -806,4 +1666,5 @@ loadAllNews();
 </script>
 
 </body>
+
 </html>

@@ -209,7 +209,7 @@
 
 
     /*
-      AI 분석 버튼
+      AI 버튼
     */
 
     .ai-button {
@@ -229,13 +229,13 @@
     }
 
     .ai-button:disabled {
-      opacity: 0.55;
+      opacity: 0.6;
       cursor: default;
     }
 
 
     /*
-      AI 분석 결과 박스
+      AI 결과
     */
 
     .ai-result {
@@ -245,7 +245,8 @@
       background: #f8f7ff;
       border: 1px solid #e5e1ff;
       border-radius: 12px;
-      line-height: 1.6;
+      line-height: 1.7;
+      white-space: pre-wrap;
     }
 
     .ai-result.show {
@@ -254,27 +255,16 @@
 
     .ai-result-title {
       font-weight: bold;
-      font-size: 16px;
       margin-bottom: 10px;
     }
 
-    .ai-section {
-      margin-top: 12px;
-    }
-
-    .ai-label {
-      font-weight: bold;
-      margin-bottom: 3px;
-    }
-
-    .importance {
-      font-size: 17px;
-      letter-spacing: 1px;
+    .ai-error {
+      color: #b42318;
     }
 
 
     /*
-      메시지
+      일반 메시지
     */
 
     .message {
@@ -405,6 +395,7 @@
       </button>
 
     </div>
+
 
     <div class="keyword-info">
       ⚙️ 종목별 관련 키워드 설정 ·
@@ -538,7 +529,7 @@ const saveKeywordButton =
 
 /*
 ==================================================
-저장된 종목
+저장 데이터
 ==================================================
 */
 
@@ -552,25 +543,11 @@ let stocks =
   ];
 
 
-
-/*
-==================================================
-종목별 키워드
-==================================================
-*/
-
 let stockKeywords =
   JSON.parse(
     localStorage.getItem("stockKeywords")
   ) || {};
 
-
-
-/*
-==================================================
-읽은 뉴스 기록
-==================================================
-*/
 
 let seenArticles =
   JSON.parse(
@@ -578,14 +555,20 @@ let seenArticles =
   ) || [];
 
 
-
 let selectedStock =
   "ALL";
+
 
 let editingStock =
   null;
 
 
+
+/*
+==================================================
+저장 함수
+==================================================
+*/
 
 function saveStocks() {
 
@@ -597,7 +580,6 @@ function saveStocks() {
 }
 
 
-
 function saveKeywords() {
 
   localStorage.setItem(
@@ -606,7 +588,6 @@ function saveKeywords() {
   );
 
 }
-
 
 
 function saveSeenArticles() {
@@ -653,7 +634,10 @@ function renderStocks() {
     function(stockName, index) {
 
       const stock =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
+
 
       stock.className =
         "stock";
@@ -671,10 +655,14 @@ function renderStocks() {
 
 
       const name =
-        document.createElement("span");
+        document.createElement(
+          "span"
+        );
+
 
       name.className =
         "stock-name";
+
 
       name.textContent =
         stockName;
@@ -687,7 +675,9 @@ function renderStocks() {
           selectedStock =
             stockName;
 
+
           renderStocks();
+
 
           loadSingleStock(
             stockName
@@ -699,13 +689,18 @@ function renderStocks() {
 
 
       const settingsButton =
-        document.createElement("button");
+        document.createElement(
+          "button"
+        );
+
 
       settingsButton.className =
         "stock-button";
 
+
       settingsButton.textContent =
         "⚙️";
+
 
       settingsButton.title =
         "관련 키워드 설정";
@@ -717,6 +712,7 @@ function renderStocks() {
 
           event.stopPropagation();
 
+
           openKeywordModal(
             stockName
           );
@@ -727,10 +723,14 @@ function renderStocks() {
 
 
       const deleteButton =
-        document.createElement("button");
+        document.createElement(
+          "button"
+        );
+
 
       deleteButton.className =
         "stock-button";
+
 
       deleteButton.textContent =
         "×";
@@ -760,7 +760,8 @@ function renderStocks() {
 
 
           if (
-            selectedStock === stockName
+            selectedStock ===
+            stockName
           ) {
 
             selectedStock =
@@ -781,9 +782,11 @@ function renderStocks() {
         name
       );
 
+
       stock.appendChild(
         settingsButton
       );
+
 
       stock.appendChild(
         deleteButton
@@ -833,7 +836,9 @@ addButton.addEventListener(
 
 
     if (
-      stocks.includes(cleanName)
+      stocks.includes(
+        cleanName
+      )
     ) {
 
       alert(
@@ -986,6 +991,7 @@ function closeKeywordModal() {
     .classList
     .remove("show");
 
+
   editingStock =
     null;
 
@@ -1023,6 +1029,7 @@ allStockButton.addEventListener(
 
     selectedStock =
       "ALL";
+
 
     renderStocks();
 
@@ -1071,7 +1078,9 @@ async function fetchQuery(
   const response =
     await fetch(
       "/api/news?q=" +
-      encodeURIComponent(query)
+      encodeURIComponent(
+        query
+      )
     );
 
 
@@ -1334,6 +1343,7 @@ function sortByDate(
       a.pubDate
     ).getTime();
 
+
   const dateB =
     new Date(
       b.pubDate
@@ -1351,7 +1361,7 @@ function sortByDate(
 
 /*
 ==================================================
-기사 고유값
+기사 고유값 / 읽음
 ==================================================
 */
 
@@ -1432,11 +1442,15 @@ function removeDuplicates(
     function(item) {
 
       const key =
-        getArticleKey(item);
+        getArticleKey(
+          item
+        );
 
 
       if (
-        seen.has(key)
+        seen.has(
+          key
+        )
       ) {
 
         return false;
@@ -1444,12 +1458,91 @@ function removeDuplicates(
       }
 
 
-      seen.add(key);
+      seen.add(
+        key
+      );
+
 
       return true;
 
     }
   );
+
+}
+
+
+
+/*
+==================================================
+★ 실제 AI 분석 요청
+==================================================
+*/
+
+async function requestAIAnalysis(
+  item
+) {
+
+  const response =
+    await fetch(
+      "/api/analyze",
+      {
+        method:
+          "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+
+        body:
+          JSON.stringify({
+
+            stock:
+              item.stock,
+
+            title:
+              removeHtmlTags(
+                item.title
+              ),
+
+            description:
+              removeHtmlTags(
+                item.description
+              )
+
+          })
+      }
+    );
+
+
+  /*
+    JSON 응답 읽기
+  */
+
+  const data =
+    await response.json();
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      data.error ||
+      "AI 분석 실패"
+    );
+
+  }
+
+
+  if (!data.analysis) {
+
+    throw new Error(
+      "AI 분석 결과가 없습니다."
+    );
+
+  }
+
+
+  return data.analysis;
 
 }
 
@@ -1485,7 +1578,9 @@ function renderNews(
     function(item) {
 
       const articleKey =
-        getArticleKey(item);
+        getArticleKey(
+          item
+        );
 
 
       const isNew =
@@ -1515,7 +1610,9 @@ function renderNews(
 
 
       /*
-        배지 영역
+      -------------------------
+      배지
+      -------------------------
       */
 
       const top =
@@ -1583,7 +1680,8 @@ function renderNews(
 
 
       if (
-        item.source === "GLOBAL"
+        item.source ===
+        "GLOBAL"
       ) {
 
         sourceBadge.className =
@@ -1643,7 +1741,9 @@ function renderNews(
 
 
       /*
-        기사 제목
+      -------------------------
+      제목
+      -------------------------
       */
 
       const titleBox =
@@ -1713,7 +1813,9 @@ function renderNews(
 
 
       /*
-        설명
+      -------------------------
+      설명
+      -------------------------
       */
 
       const description =
@@ -1734,7 +1836,9 @@ function renderNews(
 
 
       /*
-        날짜
+      -------------------------
+      날짜
+      -------------------------
       */
 
       const meta =
@@ -1756,7 +1860,7 @@ function renderNews(
 
       /*
       ==================================================
-      AI 분석 버튼
+      👻 AI 분석 버튼
       ==================================================
       */
 
@@ -1771,13 +1875,9 @@ function renderNews(
 
 
       aiButton.textContent =
-        "✨ AI 분석";
+        "👻 AI 분석";
 
 
-
-      /*
-        AI 결과가 들어갈 공간
-      */
 
       const aiResult =
         document.createElement(
@@ -1791,76 +1891,130 @@ function renderNews(
 
 
       /*
-        버튼 클릭
+        ★ 실제 AI 호출
       */
 
       aiButton.addEventListener(
         "click",
-        function() {
-
-          /*
-            아직 실제 AI는 연결하지 않았다.
-
-            다음 단계에서 이 부분이
-            /api/analyze 를 호출하게 된다.
-          */
-
+        async function() {
 
           aiButton.disabled =
             true;
 
 
           aiButton.textContent =
-            "✨ 분석 중...";
+            "👻 분석 중...";
 
 
-          aiResult.classList.add(
-            "show"
-          );
+          aiResult.className =
+            "ai-result show";
 
 
-          aiResult.innerHTML =
-            "";
+          aiResult.textContent =
+            "AI가 뉴스를 분석하고 있습니다...";
 
 
-          const loading =
-            document.createElement(
-              "div"
-            );
+          try {
 
-
-          loading.textContent =
-            "AI가 기사를 분석하고 있습니다...";
-
-
-          aiResult.appendChild(
-            loading
-          );
-
-
-
-          /*
-            실제 AI처럼 보이도록
-            잠깐 기다린 뒤 테스트 결과 표시
-
-            이것은 API 호출이 아니다.
-          */
-
-          setTimeout(
-            function() {
-
-              showDemoAnalysis(
-                aiResult,
+            const analysis =
+              await requestAIAnalysis(
                 item
               );
 
 
-              aiButton.textContent =
-                "✓ AI 분석 완료";
+            aiResult.innerHTML =
+              "";
 
-            },
-            700
-          );
+
+            const resultTitle =
+              document.createElement(
+                "div"
+              );
+
+
+            resultTitle.className =
+              "ai-result-title";
+
+
+            resultTitle.textContent =
+              "👻 AI 뉴스 분석";
+
+
+            const resultText =
+              document.createElement(
+                "div"
+              );
+
+
+            /*
+              AI 결과는 외부 데이터이므로
+              innerHTML이 아니라
+              textContent로 넣는다.
+
+              → HTML / script 실행 방지
+            */
+
+            resultText.textContent =
+              analysis;
+
+
+            aiResult.appendChild(
+              resultTitle
+            );
+
+
+            aiResult.appendChild(
+              resultText
+            );
+
+
+            aiButton.textContent =
+              "👻 분석 완료";
+
+
+          } catch (error) {
+
+            console.error(
+              error
+            );
+
+
+            aiResult.innerHTML =
+              "";
+
+
+            const errorText =
+              document.createElement(
+                "div"
+              );
+
+
+            errorText.className =
+              "ai-error";
+
+
+            errorText.textContent =
+              "AI 분석에 실패했습니다. 다시 시도해 주세요.";
+
+
+            aiResult.appendChild(
+              errorText
+            );
+
+
+            /*
+              실패한 경우에는
+              다시 누를 수 있게 한다.
+            */
+
+            aiButton.disabled =
+              false;
+
+
+            aiButton.textContent =
+              "👻 다시 분석";
+
+          }
 
         }
       );
@@ -1868,28 +2022,35 @@ function renderNews(
 
 
       /*
-        카드 완성
+      -------------------------
+      카드 완성
+      -------------------------
       */
 
       card.appendChild(
         top
       );
 
+
       card.appendChild(
         titleBox
       );
+
 
       card.appendChild(
         description
       );
 
+
       card.appendChild(
         meta
       );
 
+
       card.appendChild(
         aiButton
       );
+
 
       card.appendChild(
         aiResult
@@ -1909,276 +2070,7 @@ function renderNews(
 
 /*
 ==================================================
-테스트용 AI 분석
-
-★ 아직 진짜 AI가 아니다.
-
-다음 단계에서 이 함수 대신
-/api/analyze 서버를 호출한다.
-==================================================
-*/
-
-function showDemoAnalysis(
-  container,
-  item
-) {
-
-  container.innerHTML =
-    "";
-
-
-  const title =
-    document.createElement(
-      "div"
-    );
-
-
-  title.className =
-    "ai-result-title";
-
-
-  title.textContent =
-    "🤖 AI 분석 미리보기";
-
-
-  container.appendChild(
-    title
-  );
-
-
-
-  /*
-    요약
-  */
-
-  const summary =
-    document.createElement(
-      "div"
-    );
-
-
-  summary.className =
-    "ai-section";
-
-
-  const summaryLabel =
-    document.createElement(
-      "div"
-    );
-
-
-  summaryLabel.className =
-    "ai-label";
-
-
-  summaryLabel.textContent =
-    "📝 3줄 요약";
-
-
-  const summaryText =
-    document.createElement(
-      "div"
-    );
-
-
-  summaryText.textContent =
-    "• 기사 핵심 내용을 AI가 요약합니다.\n" +
-    "• 투자자가 알아야 할 내용을 추립니다.\n" +
-    "• 다음 단계에서 실제 AI 분석으로 교체됩니다.";
-
-
-  summaryText.style.whiteSpace =
-    "pre-line";
-
-
-  summary.appendChild(
-    summaryLabel
-  );
-
-
-  summary.appendChild(
-    summaryText
-  );
-
-
-  container.appendChild(
-    summary
-  );
-
-
-
-  /*
-    종목 영향
-  */
-
-  const impact =
-    document.createElement(
-      "div"
-    );
-
-
-  impact.className =
-    "ai-section";
-
-
-  const impactLabel =
-    document.createElement(
-      "div"
-    );
-
-
-  impactLabel.className =
-    "ai-label";
-
-
-  impactLabel.textContent =
-    "📈 내 종목 영향";
-
-
-  const impactText =
-    document.createElement(
-      "div"
-    );
-
-
-  impactText.textContent =
-    item.stock +
-    "에 어떤 영향을 줄 수 있는지 AI가 분석할 예정입니다.";
-
-
-  impact.appendChild(
-    impactLabel
-  );
-
-
-  impact.appendChild(
-    impactText
-  );
-
-
-  container.appendChild(
-    impact
-  );
-
-
-
-  /*
-    이유
-  */
-
-  const reason =
-    document.createElement(
-      "div"
-    );
-
-
-  reason.className =
-    "ai-section";
-
-
-  const reasonLabel =
-    document.createElement(
-      "div"
-    );
-
-
-  reasonLabel.className =
-    "ai-label";
-
-
-  reasonLabel.textContent =
-    "💡 이유";
-
-
-  const reasonText =
-    document.createElement(
-      "div"
-    );
-
-
-  reasonText.textContent =
-    "매출, 경쟁력, 수요, 공급망 등 투자 관점에서 관련성을 설명합니다.";
-
-
-  reason.appendChild(
-    reasonLabel
-  );
-
-
-  reason.appendChild(
-    reasonText
-  );
-
-
-  container.appendChild(
-    reason
-  );
-
-
-
-  /*
-    중요도
-  */
-
-  const importance =
-    document.createElement(
-      "div"
-    );
-
-
-  importance.className =
-    "ai-section";
-
-
-  const importanceLabel =
-    document.createElement(
-      "div"
-    );
-
-
-  importanceLabel.className =
-    "ai-label";
-
-
-  importanceLabel.textContent =
-    "🔥 중요도";
-
-
-  const importanceText =
-    document.createElement(
-      "div"
-    );
-
-
-  importanceText.className =
-    "importance";
-
-
-  importanceText.textContent =
-    "★★★★☆  (테스트)";
-
-
-  importance.appendChild(
-    importanceLabel
-  );
-
-
-  importance.appendChild(
-    importanceText
-  );
-
-
-  container.appendChild(
-    importance
-  );
-
-}
-
-
-
-/*
-==================================================
-HTML 제거
+HTML 태그 제거
 ==================================================
 */
 
@@ -2208,7 +2100,7 @@ function removeHtmlTags(
 
 /*
 ==================================================
-안전한 URL
+외부 URL 검사
 ==================================================
 */
 
@@ -2219,12 +2111,16 @@ function safeUrl(
   try {
 
     const parsed =
-      new URL(url);
+      new URL(
+        url
+      );
 
 
     if (
-      parsed.protocol === "https:" ||
-      parsed.protocol === "http:"
+      parsed.protocol ===
+        "https:" ||
+      parsed.protocol ===
+        "http:"
     ) {
 
       return url;
@@ -2301,7 +2197,7 @@ function formatDate(
 
 /*
 ==================================================
-시작
+앱 시작
 ==================================================
 */
 

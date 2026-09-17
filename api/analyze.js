@@ -19,7 +19,7 @@ export default async function handler(req, res) {
 
     /*
     ==========================================
-    브라우저에서 받은 기사 정보
+    브라우저에서 받은 데이터
     ==========================================
     */
 
@@ -29,10 +29,6 @@ export default async function handler(req, res) {
       description
     } = req.body || {};
 
-
-    /*
-      최소한 제목은 있어야 분석 가능
-    */
 
     if (!title) {
 
@@ -45,10 +41,7 @@ export default async function handler(req, res) {
 
     /*
     ==========================================
-    입력 길이 제한
-
-    외부 뉴스 데이터가 지나치게 길거나
-    이상한 경우를 대비한다.
+    입력값 길이 제한
     ==========================================
     */
 
@@ -70,19 +63,21 @@ export default async function handler(req, res) {
 
     /*
     ==========================================
-    AI에게 줄 지시문
+    Gemini에게 줄 지시문
     ==========================================
     */
 
     const prompt = `
-너는 개인 투자자를 돕는 뉴스 분석 도우미다.
+너는 개인 투자자를 위한 뉴스 분석 도우미다.
 
-아래 뉴스 정보만을 바탕으로 분석하라.
+아래에 제공된 기사 제목과 설명만을 바탕으로 분석하라.
 
-확인할 수 없는 사실을 만들어내지 말고,
-정보가 부족하면 정보가 부족하다고 명시하라.
-
-매수 또는 매도를 권유하지 마라.
+중요한 규칙:
+- 제공되지 않은 사실을 만들어내지 마라.
+- 기사 원문 전체를 읽었다고 가정하지 마라.
+- 정보가 부족하면 "정보 부족"이라고 명시하라.
+- 매수 또는 매도를 권유하지 마라.
+- 과도하게 긍정적이거나 부정적으로 해석하지 마라.
 
 관심 종목:
 ${safeStock}
@@ -93,7 +88,7 @@ ${safeTitle}
 기사 설명:
 ${safeDescription}
 
-다음 형식으로 한국어로 답하라.
+반드시 다음 형식으로 한국어로 답하라.
 
 [3줄 요약]
 • 핵심 내용 1
@@ -104,8 +99,8 @@ ${safeDescription}
 긍정 / 부정 / 중립 / 불확실 중 하나
 
 [이유]
-투자 관점에서 왜 그런 영향을 줄 수 있는지
-2~3문장으로 설명
+해당 뉴스가 ${safeStock}에 어떤 의미가 있을 수 있는지
+2~3문장으로 설명하라.
 
 [중요도]
 1~5 중 숫자 하나
@@ -122,16 +117,18 @@ ${safeDescription}
 
     /*
     ==========================================
-    OpenAI Responses API 호출
-
-    API Key는 Vercel 환경변수에서만 읽는다.
-    브라우저로 보내지 않는다.
+    Gemini API 호출
     ==========================================
     */
 
-    const openAIResponse =
+    const geminiUrl =
+      "https://generativelanguage.googleapis.com/v1beta/models/" +
+      "gemini-2.5-flash-lite:generateContent";
+
+
+    const geminiResponse =
       await fetch(
-        "https://api.openai.com/v1/responses",
+        geminiUrl,
         {
           method: "POST",
 
@@ -139,21 +136,29 @@ ${safeDescription}
             "Content-Type":
               "application/json",
 
-            "Authorization":
-              "Bearer " +
-              process.env.OPENAI_API_KEY
+            "x-goog-api-key":
+              process.env.GEMINI_API_KEY
           },
 
           body: JSON.stringify({
 
-            model:
-              "gpt-5-mini",
+            contents: [
+              {
+                parts: [
+                  {
+                    text: prompt
+                  }
+                ]
+              }
+            ],
 
-            input:
-              prompt,
+            generationConfig: {
 
-            max_output_tokens:
-              600
+              temperature: 0.2,
+
+              maxOutputTokens: 600
+
+            }
 
           })
         }
@@ -163,33 +168,33 @@ ${safeDescription}
 
     /*
     ==========================================
-    OpenAI 응답 읽기
+    Gemini 응답 읽기
     ==========================================
     */
 
     const data =
-      await openAIResponse.json();
+      await geminiResponse.json();
 
 
 
     /*
-      OpenAI에서 오류가 발생한 경우
-
-      API Key 자체는 절대 브라우저로 보내지 않는다.
+    ==========================================
+    Gemini 오류 처리
+    ==========================================
     */
 
-    if (!openAIResponse.ok) {
+    if (!geminiResponse.ok) {
 
       console.error(
-        "OpenAI API error:",
+        "Gemini API error:",
         data?.error?.message ||
-        openAIResponse.status
+        geminiResponse.status
       );
 
 
       return res.status(500).json({
         error:
-          "AI 분석 요청에 실패했습니다."
+          "Gemini AI 분석 요청에 실패했습니다."
       });
 
     }
@@ -198,78 +203,38 @@ ${safeDescription}
 
     /*
     ==========================================
-    AI가 생성한 텍스트 찾기
+    Gemini가 생성한 텍스트 꺼내기
     ==========================================
     */
 
-    let analysis = "";
+    const analysis =
+      data?.candidates?.[0]
+        ?.content
+        ?.parts
+        ?.map(
+          function(part) {
 
-
-    if (data.output_text) {
-
-      analysis =
-        data.output_text;
-
-    } else {
-
-      /*
-        raw HTTP 응답에서는
-        output 배열 안에 텍스트가 들어올 수 있으므로
-        안전하게 찾아준다.
-      */
-
-      const outputItems =
-        data.output || [];
-
-
-      for (
-        const outputItem
-        of outputItems
-      ) {
-
-        if (
-          outputItem.type !==
-          "message"
-        ) {
-
-          continue;
-
-        }
-
-
-        const contents =
-          outputItem.content || [];
-
-
-        for (
-          const content
-          of contents
-        ) {
-
-          if (
-            content.type ===
-            "output_text" &&
-            content.text
-          ) {
-
-            analysis +=
-              content.text;
+            return part.text || "";
 
           }
-
-        }
-
-      }
-
-    }
+        )
+        .join("")
+        .trim();
 
 
 
     /*
-      텍스트가 하나도 없으면 오류
+    ==========================================
+    결과가 비어 있는 경우
+    ==========================================
     */
 
     if (!analysis) {
+
+      console.error(
+        "Gemini returned no text."
+      );
+
 
       return res.status(500).json({
         error:
@@ -282,14 +247,15 @@ ${safeDescription}
 
     /*
     ==========================================
-    브라우저에 결과 전달
+    브라우저에 분석 결과 전달
     ==========================================
     */
 
     return res.status(200).json({
 
-      analysis:
-        analysis
+      analysis: analysis,
+
+      provider: "gemini"
 
     });
 

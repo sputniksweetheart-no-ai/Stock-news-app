@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>My Stock News</title>
 
 <style>
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: #f4f6f8;
   color: #222;
+}
+
+button {
+  font-family: inherit;
 }
 
 .container {
@@ -42,6 +44,10 @@ h1 {
   border-radius: 15px;
   margin-bottom: 20px;
 }
+
+/* =========================
+   종목
+========================= */
 
 .stocks {
   display: flex;
@@ -102,12 +108,16 @@ h1 {
   line-height: 1.5;
 }
 
+/* =========================
+   뉴스 툴바
+========================= */
+
 .toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .refresh-button {
@@ -118,6 +128,38 @@ h1 {
   border-radius: 9px;
   cursor: pointer;
 }
+
+/* =========================
+   필터
+========================= */
+
+.filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.filter-button {
+  border: 1px solid #ddd;
+  background: white;
+  color: #555;
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.filter-button.active {
+  background: #111827;
+  color: white;
+  border-color: #111827;
+}
+
+/* =========================
+   뉴스 카드
+========================= */
 
 .news-card {
   background: white;
@@ -143,7 +185,8 @@ h1 {
 .stock-badge,
 .source-badge,
 .keyword-badge,
-.new-badge {
+.new-badge,
+.analysis-badge {
   padding: 4px 8px;
   border-radius: 7px;
   font-size: 12px;
@@ -177,6 +220,12 @@ h1 {
   font-weight: bold;
 }
 
+.analysis-badge {
+  background: #f4f3ff;
+  font-weight: bold;
+  border: 1px solid #e3e0ff;
+}
+
 .news-title {
   font-size: 18px;
   font-weight: bold;
@@ -204,12 +253,9 @@ h1 {
   color: #999;
 }
 
-
-/*
-==========================================
-AI 버튼
-==========================================
-*/
+/* =========================
+   AI
+========================= */
 
 .ai-button {
   margin-top: 14px;
@@ -227,13 +273,6 @@ AI 버튼
   opacity: 0.6;
   cursor: default;
 }
-
-
-/*
-==========================================
-AI 카드
-==========================================
-*/
 
 .ai-result {
   display: none;
@@ -275,11 +314,6 @@ AI 카드
   margin-bottom: 5px;
 }
 
-
-/*
-영향 + 중요도
-*/
-
 .ai-status-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -300,11 +334,6 @@ AI 카드
   margin-top: 7px;
 }
 
-
-/*
-신호등
-*/
-
 .impact-positive {
   color: #16843c;
 }
@@ -321,21 +350,11 @@ AI 카드
   color: #667085;
 }
 
-
-/*
-별
-*/
-
 .importance-stars {
   font-size: 20px;
   letter-spacing: 2px;
   white-space: nowrap;
 }
-
-
-/*
-이유
-*/
 
 .ai-reason {
   line-height: 1.7;
@@ -346,13 +365,6 @@ AI 카드
   color: #b42318;
 }
 
-
-/*
-==========================================
-기타
-==========================================
-*/
-
 .message {
   background: white;
   padding: 25px;
@@ -360,23 +372,18 @@ AI 카드
   color: #666;
 }
 
-
-/*
-키워드 모달
-*/
+/* =========================
+   모달
+========================= */
 
 .modal-background {
   display: none;
   position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: rgba(0,0,0,0.45);
   align-items: center;
   justify-content: center;
   padding: 20px;
-  box-sizing: border-box;
   z-index: 1000;
 }
 
@@ -390,7 +397,6 @@ AI 카드
   max-width: 500px;
   padding: 24px;
   border-radius: 18px;
-  box-sizing: border-box;
 }
 
 .modal h2 {
@@ -405,7 +411,6 @@ AI 카드
 
 .keyword-input {
   width: 100%;
-  box-sizing: border-box;
   padding: 13px;
   border: 1px solid #ccc;
   border-radius: 10px;
@@ -437,19 +442,10 @@ AI 카드
   color: white;
 }
 
-
-/*
-아이패드 / 모바일
-*/
-
 @media (max-width: 600px) {
 
   .container {
     padding: 15px;
-  }
-
-  .ai-status-row {
-    grid-template-columns: 1fr 1fr;
   }
 
   .importance-stars {
@@ -460,9 +456,7 @@ AI 카드
 }
 
 </style>
-
 </head>
-
 
 <body>
 
@@ -471,42 +465,30 @@ AI 카드
 <h1>📈 My Stock News</h1>
 
 <div class="subtitle">
-내 관심 종목과 관련 키워드의 뉴스를 한 번에
+내 관심 종목에서 투자에 중요한 뉴스를 먼저
 </div>
-
 
 <div class="section">
 
 <h2>내 종목</h2>
 
-<div
-  class="stocks"
-  id="stockList"
->
+<div class="stocks" id="stockList">
 
-<div
-  class="all-stock"
-  id="allStockButton"
->
+<div class="all-stock" id="allStockButton">
 전체
 </div>
 
-<button
-  class="add-stock"
-  id="addStockButton"
->
+<button class="add-stock" id="addStockButton">
 + 종목 추가
 </button>
 
 </div>
 
 <div class="keyword-info">
-⚙️ 종목별 관련 키워드 설정 ·
-처음 보는 뉴스에는 NEW가 표시됩니다.
+⚙️ 관련 키워드 설정 · 투자 관련도가 높은 뉴스가 먼저 표시됩니다.
 </div>
 
 </div>
-
 
 <div class="toolbar">
 
@@ -514,34 +496,43 @@ AI 카드
 내 종목 최신 뉴스
 </h2>
 
-<button
-  class="refresh-button"
-  id="refreshButton"
->
+<button class="refresh-button" id="refreshButton">
 ↻ 새로고침
 </button>
 
 </div>
 
+<div class="filters">
+
+<button class="filter-button active" data-filter="ALL">
+전체
+</button>
+
+<button class="filter-button" data-filter="IMPORTANT">
+🔥 중요
+</button>
+
+<button class="filter-button" data-filter="NEW">
+🆕 NEW
+</button>
+
+<button class="filter-button" data-filter="ANALYZED">
+👻 분석됨
+</button>
+
+</div>
 
 <div id="newsList">
-
 <div class="message">
 뉴스를 불러오는 중...
 </div>
-
 </div>
 
 </div>
 
+<!-- 키워드 모달 -->
 
-
-<!-- 키워드 설정 -->
-
-<div
-  class="modal-background"
-  id="keywordModal"
->
+<div class="modal-background" id="keywordModal">
 
 <div class="modal">
 
@@ -563,34 +554,25 @@ AI 카드
 
 <div class="modal-buttons">
 
-<button
-  class="cancel-button"
-  id="cancelKeywordButton"
->
+<button class="cancel-button" id="cancelKeywordButton">
 취소
 </button>
 
-<button
-  class="save-button"
-  id="saveKeywordButton"
->
+<button class="save-button" id="saveKeywordButton">
 저장
 </button>
 
 </div>
 
 </div>
-
 </div>
-
-
 
 <script>
 
 /*
-==========================================
-화면 요소
-==========================================
+==================================================
+화면
+==================================================
 */
 
 const addButton =
@@ -626,11 +608,14 @@ const cancelKeywordButton =
 const saveKeywordButton =
   document.getElementById("saveKeywordButton");
 
+const filterButtons =
+  document.querySelectorAll(".filter-button");
+
 
 /*
-==========================================
+==================================================
 저장 데이터
-==========================================
+==================================================
 */
 
 let stocks =
@@ -642,43 +627,1092 @@ let stocks =
     "Curiox"
   ];
 
-
 let stockKeywords =
   JSON.parse(
     localStorage.getItem("stockKeywords")
   ) || {};
-
 
 let seenArticles =
   JSON.parse(
     localStorage.getItem("seenArticles")
   ) || [];
 
-
-/*
-AI 분석 캐시
-
-기사 고유값을 이용해서
-한 번 분석한 결과를 저장한다.
-*/
-
 let aiAnalysisCache =
   JSON.parse(
-    localStorage.getItem(
-      "aiAnalysisCache"
-    )
+    localStorage.getItem("aiAnalysisCache")
   ) || {};
 
-
 let selectedStock = "ALL";
+
+let currentFilter = "ALL";
+
+let currentNews = [];
 
 let editingStock = null;
 
 
 /*
-==========================================
+==================================================
+★ 투자 관련도 엔진
+
+숫자는 화면에 표시하지 않는다.
+오직 뉴스 정렬에만 사용한다.
+
+titleWeight:
+제목에 등장하면 더 강하게 반영
+
+descriptionWeight:
+기사 설명에 등장하면 반영
+==================================================
+*/
+
+const STOCK_PROFILES = {
+
+  "삼성전자": {
+
+    /*
+    삼성전자에서 투자 영향력이 큰 영역
+    */
+
+    strong: [
+
+      "hbm4",
+      "hbm3e",
+      "hbm",
+      "dram",
+      "ddr5",
+      "nand",
+      "메모리 가격",
+      "메모리가격",
+
+      "파운드리",
+      "foundry",
+
+      "반도체",
+      "semiconductor",
+
+      "엔비디아",
+      "nvidia",
+
+      "tsmc",
+
+      "amd",
+
+      "퀄컴",
+      "qualcomm",
+
+      "수율",
+      "yield",
+
+      "첨단공정",
+      "미세공정",
+
+      "웨이퍼",
+
+      "반도체 투자",
+      "반도체 설비",
+      "설비투자",
+
+      "공급계약",
+      "공급 계약",
+
+      "수출통제",
+      "수출 통제",
+
+      "chip export",
+      "export control"
+
+    ],
+
+    /*
+    기업가치와 직접 연결될 가능성이 높은 공통 표현
+    */
+
+    financial: [
+
+      "실적",
+      "영업이익",
+      "순이익",
+      "매출",
+      "가이던스",
+      "전망치",
+      "어닝",
+      "earnings",
+      "revenue",
+      "profit",
+
+      "capex",
+
+      "대규모 투자",
+
+      "인수합병",
+      "m&a",
+
+      "자사주",
+      "주주환원",
+      "배당",
+
+      "대형 계약",
+      "계약 체결",
+
+      "관세",
+      "규제"
+
+    ],
+
+    /*
+    스마트폰 뉴스는 무조건 낮추지 않는다.
+    판매량/실적 연결 여부를 별도로 판단한다.
+    */
+
+    secondaryBusiness: [
+
+      "갤럭시",
+      "galaxy",
+      "스마트폰",
+      "smartphone",
+      "폴더블"
+
+    ],
+
+    /*
+    사업 영향이 작은 경우가 많은 표현
+    */
+
+    lowValue: [
+
+      "경품",
+      "사은품",
+      "이벤트",
+      "체험 행사",
+      "체험행사",
+      "할인 행사",
+      "할인행사",
+      "프로모션",
+
+      "사회공헌",
+      "봉사활동",
+      "기부",
+
+      "스포츠 후원",
+      "문화 행사",
+
+      "전직 임원",
+      "전 삼성전자",
+      "삼성전자 출신"
+
+    ]
+
+  },
+
+
+  "SK하이닉스": {
+
+    strong: [
+
+      "hbm4",
+      "hbm3e",
+      "hbm",
+
+      "dram",
+      "ddr5",
+      "nand",
+
+      "메모리 가격",
+      "메모리가격",
+
+      "엔비디아",
+      "nvidia",
+
+      "마이크론",
+      "micron",
+
+      "삼성전자",
+
+      "tsmc",
+
+      "반도체",
+      "semiconductor",
+
+      "ai 메모리",
+      "ai 반도체",
+
+      "수율",
+
+      "공급계약",
+      "공급 계약",
+
+      "설비투자",
+      "생산능력",
+
+      "청주",
+      "용인 클러스터"
+
+    ],
+
+    financial: [
+
+      "실적",
+      "영업이익",
+      "순이익",
+      "매출",
+
+      "가이던스",
+      "전망치",
+
+      "earnings",
+      "revenue",
+      "profit",
+
+      "capex",
+
+      "투자",
+
+      "계약",
+
+      "관세",
+      "규제",
+      "수출통제",
+
+      "자사주",
+      "배당"
+
+    ],
+
+    secondaryBusiness: [],
+
+    lowValue: [
+
+      "경품",
+      "이벤트",
+      "사회공헌",
+      "봉사활동",
+      "기부",
+
+      "전직 임원",
+      "sk하이닉스 출신"
+
+    ]
+
+  },
+
+
+  /*
+  ================================================
+  Curiox
+
+  사용자가 중요하게 보는 핵심 영역:
+  매출 / 계약 / NIST / FDA / AstraZeneca /
+  Big Pharma / Partnership /
+  표준화 / 백서
+  ================================================
+  */
+
+  "Curiox": {
+
+    strong: [
+
+      "nist",
+
+      "national institute of standards and technology",
+
+      "fda",
+
+      "food and drug administration",
+
+      "astrazeneca",
+      "아스트라제네카",
+
+      "big pharma",
+      "bigpharma",
+      "빅파마",
+
+      "partnership",
+      "partner",
+      "파트너십",
+      "파트너쉽",
+
+      "standardization",
+      "standardisation",
+      "표준화",
+
+      "white paper",
+      "whitepaper",
+      "백서",
+
+      "contract",
+      "agreement",
+      "계약",
+      "공급계약",
+      "공급 계약",
+
+      "revenue",
+      "sales",
+      "매출"
+
+    ],
+
+    financial: [
+
+      "실적",
+      "영업이익",
+      "순이익",
+
+      "매출 증가",
+      "매출 성장",
+
+      "수주",
+
+      "계약 체결",
+
+      "상용화",
+      "commercialization",
+
+      "adoption",
+      "도입",
+
+      "customer",
+      "고객",
+
+      "pharma",
+      "제약사",
+
+      "biopharma",
+      "바이오파마"
+
+    ],
+
+    /*
+    큐리옥스 사업 자체를 설명하는 단어.
+    핵심 이벤트보다는 가중치를 낮게 준다.
+    */
+
+    secondaryBusiness: [
+
+      "cell analysis",
+      "cell washing",
+
+      "세포 분석",
+      "세포분석",
+
+      "세포 세척",
+      "세포세척",
+
+      "automation",
+      "자동화",
+
+      "laminar wash",
+      "curiox biosystems"
+
+    ],
+
+    lowValue: [
+
+      "경품",
+      "이벤트",
+
+      "사회공헌",
+
+      "전직 임원",
+
+      "단순 인터뷰"
+
+    ]
+
+  }
+
+};
+
+
+/*
+==================================================
+공통 중요 단어
+==================================================
+*/
+
+const GLOBAL_HIGH_VALUE_TERMS = [
+
+  "실적",
+  "영업이익",
+  "순이익",
+  "매출",
+
+  "earnings",
+  "revenue",
+  "profit",
+
+  "계약",
+  "contract",
+
+  "공급",
+  "supply",
+
+  "인수",
+  "합병",
+  "m&a",
+
+  "투자",
+  "investment",
+
+  "규제",
+  "regulation",
+
+  "관세",
+  "tariff",
+
+  "승인",
+  "approval",
+
+  "파트너십",
+  "파트너쉽",
+  "partnership"
+
+];
+
+
+/*
+==================================================
+문자 정리
+==================================================
+*/
+
+function normalizeText(text) {
+
+  return removeHtmlTags(
+    text || ""
+  )
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+
+}
+
+
+/*
+==================================================
+단어 포함 검사
+==================================================
+*/
+
+function containsTerm(
+  text,
+  term
+) {
+
+  return text.includes(
+    term.toLowerCase()
+  );
+
+}
+
+
+function countMatches(
+  text,
+  terms
+) {
+
+  let count = 0;
+
+  terms.forEach(
+    function(term) {
+
+      if (
+        containsTerm(
+          text,
+          term
+        )
+      ) {
+        count++;
+      }
+
+    }
+  );
+
+  return count;
+
+}
+
+
+/*
+==================================================
+투자 관련도 계산
+==================================================
+*/
+
+function calculateRelevance(
+  item
+) {
+
+  const profile =
+    STOCK_PROFILES[
+      item.stock
+    ];
+
+
+  /*
+  아직 별도 프로필이 없는 종목은
+  일반적인 투자 키워드만 사용한다.
+  */
+
+  const title =
+    normalizeText(
+      item.title
+    );
+
+  const description =
+    normalizeText(
+      item.description
+    );
+
+  const fullText =
+    title + " " + description;
+
+
+  let score = 0;
+
+
+  /*
+  회사 이름이 제목에 있으면 기본 가점
+  */
+
+  const stockName =
+    normalizeText(
+      item.stock
+    );
+
+
+  if (
+    stockName &&
+    title.includes(stockName)
+  ) {
+    score += 15;
+  }
+
+
+  /*
+  사용자가 직접 등록한 키워드와
+  매칭된 뉴스도 약간 가점
+  */
+
+  if (
+    item.matchedKeyword
+  ) {
+    score += 8;
+  }
+
+
+  /*
+  일반적인 투자 중요 단어
+  */
+
+  score +=
+    countMatches(
+      title,
+      GLOBAL_HIGH_VALUE_TERMS
+    ) * 6;
+
+
+  score +=
+    countMatches(
+      description,
+      GLOBAL_HIGH_VALUE_TERMS
+    ) * 3;
+
+
+  /*
+  종목별 프로필이 없으면 여기까지
+  */
+
+  if (!profile) {
+
+    item.relevanceScore =
+      score;
+
+    return score;
+
+  }
+
+
+  /*
+  종목 핵심 키워드
+
+  제목에 있으면 강한 가점
+  설명에만 있으면 조금 낮은 가점
+  */
+
+  score +=
+    countMatches(
+      title,
+      profile.strong
+    ) * 14;
+
+
+  score +=
+    countMatches(
+      description,
+      profile.strong
+    ) * 7;
+
+
+  /*
+  실적/계약/기업가치 관련
+  */
+
+  score +=
+    countMatches(
+      title,
+      profile.financial
+    ) * 11;
+
+
+  score +=
+    countMatches(
+      description,
+      profile.financial
+    ) * 5;
+
+
+  /*
+  보조 사업
+
+  그 자체만으로는 높은 점수를 주지 않는다.
+  */
+
+  score +=
+    countMatches(
+      title,
+      profile.secondaryBusiness
+    ) * 3;
+
+
+  score +=
+    countMatches(
+      description,
+      profile.secondaryBusiness
+    ) * 1;
+
+
+  /*
+  낮은 가치 표현 감점
+  */
+
+  score -=
+    countMatches(
+      title,
+      profile.lowValue
+    ) * 16;
+
+
+  score -=
+    countMatches(
+      description,
+      profile.lowValue
+    ) * 7;
+
+
+  /*
+  ================================================
+  삼성전자 문맥 규칙
+  ================================================
+  */
+
+  if (
+    item.stock ===
+    "삼성전자"
+  ) {
+
+    const hasGalaxy =
+      countMatches(
+        fullText,
+        profile.secondaryBusiness
+      ) > 0;
+
+
+    const hasFinancial =
+      countMatches(
+        fullText,
+        profile.financial
+      ) > 0;
+
+
+    const hasSalesContext =
+      [
+        "판매량",
+        "판매 증가",
+        "판매 감소",
+        "출하량",
+        "점유율",
+        "시장점유율",
+        "판매 부진",
+        "판매 호조",
+        "shipments",
+        "market share",
+        "sales growth",
+        "sales decline"
+      ].some(
+        function(term) {
+          return fullText.includes(
+            term
+          );
+        }
+      );
+
+
+    const hasPromotion =
+      [
+        "경품",
+        "사은품",
+        "이벤트",
+        "할인",
+        "프로모션",
+        "체험 행사",
+        "체험행사"
+      ].some(
+        function(term) {
+          return fullText.includes(
+            term
+          );
+        }
+      );
+
+
+    /*
+    갤럭시 판매량/실적 뉴스는
+    의미 있는 뉴스일 수 있다.
+    */
+
+    if (
+      hasGalaxy &&
+      (
+        hasFinancial ||
+        hasSalesContext
+      )
+    ) {
+
+      score += 18;
+
+    }
+
+
+    /*
+    갤럭시 + 경품/행사라면 강한 감점
+    */
+
+    if (
+      hasGalaxy &&
+      hasPromotion &&
+      !hasFinancial &&
+      !hasSalesContext
+    ) {
+
+      score -= 30;
+
+    }
+
+  }
+
+
+  /*
+  ================================================
+  Curiox 문맥 규칙
+  ================================================
+  */
+
+  if (
+    item.stock ===
+    "Curiox"
+  ) {
+
+    /*
+    AZ는 두 글자라서
+    단순 문자열 "az"만으로 점수를 주지 않는다.
+
+    AstraZeneca / 아스트라제네카가
+    실제로 등장할 때만 강한 가점.
+    */
+
+    const hasAstraZeneca =
+      fullText.includes(
+        "astrazeneca"
+      ) ||
+      fullText.includes(
+        "아스트라제네카"
+      );
+
+
+    if (hasAstraZeneca) {
+      score += 22;
+    }
+
+
+    const hasNIST =
+      fullText.includes(
+        "nist"
+      ) ||
+      fullText.includes(
+        "national institute of standards and technology"
+      );
+
+
+    if (hasNIST) {
+      score += 24;
+    }
+
+
+    const hasFDA =
+      fullText.includes(
+        "fda"
+      ) ||
+      fullText.includes(
+        "food and drug administration"
+      );
+
+
+    if (hasFDA) {
+      score += 22;
+    }
+
+
+    const hasContract =
+      [
+        "contract",
+        "agreement",
+        "계약",
+        "수주",
+        "공급계약",
+        "공급 계약"
+      ].some(
+        function(term) {
+          return fullText.includes(
+            term
+          );
+        }
+      );
+
+
+    const hasRevenue =
+      [
+        "revenue",
+        "sales",
+        "매출",
+        "실적"
+      ].some(
+        function(term) {
+          return fullText.includes(
+            term
+          );
+        }
+      );
+
+
+    const hasPartnership =
+      [
+        "partnership",
+        "파트너십",
+        "파트너쉽"
+      ].some(
+        function(term) {
+          return fullText.includes(
+            term
+          );
+        }
+      );
+
+
+    const hasStandardization =
+      [
+        "standardization",
+        "standardisation",
+        "표준화"
+      ].some(
+        function(term) {
+          return fullText.includes(
+            term
+          );
+        }
+      );
+
+
+    const hasWhitePaper =
+      [
+        "white paper",
+        "whitepaper",
+        "백서"
+      ].some(
+        function(term) {
+          return fullText.includes(
+            term
+          );
+        }
+      );
+
+
+    const hasBigPharma =
+      [
+        "big pharma",
+        "bigpharma",
+        "빅파마"
+      ].some(
+        function(term) {
+          return fullText.includes(
+            term
+          );
+        }
+      );
+
+
+    /*
+    큐리옥스에서 특히 중요하게 보는
+    이벤트에 추가 가점
+    */
+
+    if (hasContract) {
+      score += 18;
+    }
+
+    if (hasRevenue) {
+      score += 18;
+    }
+
+    if (hasPartnership) {
+      score += 17;
+    }
+
+    if (hasStandardization) {
+      score += 18;
+    }
+
+    if (hasWhitePaper) {
+      score += 15;
+    }
+
+    if (hasBigPharma) {
+      score += 18;
+    }
+
+
+    /*
+    조합 가점
+
+    예:
+    NIST + 표준화
+    FDA + 표준화
+    빅파마 + 계약
+    AstraZeneca + partnership
+
+    이런 조합은 단순 단어 등장보다
+    훨씬 투자 관련성이 높다고 본다.
+    */
+
+    if (
+      hasNIST &&
+      hasStandardization
+    ) {
+      score += 25;
+    }
+
+
+    if (
+      hasFDA &&
+      hasStandardization
+    ) {
+      score += 22;
+    }
+
+
+    if (
+      hasBigPharma &&
+      (
+        hasContract ||
+        hasPartnership
+      )
+    ) {
+      score += 25;
+    }
+
+
+    if (
+      hasAstraZeneca &&
+      (
+        hasContract ||
+        hasPartnership
+      )
+    ) {
+      score += 28;
+    }
+
+
+    if (
+      hasRevenue &&
+      hasContract
+    ) {
+      score += 20;
+    }
+
+  }
+
+
+  /*
+  점수 저장
+  */
+
+  item.relevanceScore =
+    score;
+
+
+  return score;
+
+}
+
+
+/*
+==================================================
+뉴스 정렬
+
+1순위: 투자 관련도
+2순위: 같은 관련도면 최신 뉴스
+==================================================
+*/
+
+function sortByRelevance(
+  a,
+  b
+) {
+
+  const scoreA =
+    calculateRelevance(a);
+
+  const scoreB =
+    calculateRelevance(b);
+
+
+  if (
+    scoreA !== scoreB
+  ) {
+
+    return scoreB - scoreA;
+
+  }
+
+
+  return (
+    new Date(
+      b.pubDate
+    ).getTime() || 0
+  ) -
+  (
+    new Date(
+      a.pubDate
+    ).getTime() || 0
+  );
+
+}
+
+
+/*
+==================================================
 저장
-==========================================
+==================================================
 */
 
 function saveStocks() {
@@ -695,7 +1729,9 @@ function saveKeywords() {
 
   localStorage.setItem(
     "stockKeywords",
-    JSON.stringify(stockKeywords)
+    JSON.stringify(
+      stockKeywords
+    )
   );
 
 }
@@ -703,14 +1739,22 @@ function saveKeywords() {
 
 function saveSeenArticles() {
 
-  if (seenArticles.length > 1000) {
+  if (
+    seenArticles.length >
+    1000
+  ) {
+
     seenArticles =
       seenArticles.slice(-1000);
+
   }
+
 
   localStorage.setItem(
     "seenArticles",
-    JSON.stringify(seenArticles)
+    JSON.stringify(
+      seenArticles
+    )
   );
 
 }
@@ -718,17 +1762,15 @@ function saveSeenArticles() {
 
 function saveAIAnalysisCache() {
 
-  /*
-  최대 200개 분석만 보관
-  */
-
   const keys =
     Object.keys(
       aiAnalysisCache
     );
 
 
-  if (keys.length > 200) {
+  if (
+    keys.length > 200
+  ) {
 
     const keysToDelete =
       keys.slice(
@@ -740,7 +1782,9 @@ function saveAIAnalysisCache() {
     keysToDelete.forEach(
       function(key) {
 
-        delete aiAnalysisCache[key];
+        delete aiAnalysisCache[
+          key
+        ];
 
       }
     );
@@ -759,40 +1803,53 @@ function saveAIAnalysisCache() {
 
 
 /*
-==========================================
-종목
-==========================================
+==================================================
+종목 표시
+==================================================
 */
 
 function renderStocks() {
 
   document
     .querySelectorAll(".stock")
-    .forEach(function(element) {
-      element.remove();
-    });
+    .forEach(
+      function(element) {
+        element.remove();
+      }
+    );
 
 
   stocks.forEach(
-    function(stockName, index) {
+    function(
+      stockName,
+      index
+    ) {
 
       const stock =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
-      stock.className = "stock";
+      stock.className =
+        "stock";
 
 
       if (
-        selectedStock === stockName
+        selectedStock ===
+        stockName
       ) {
+
         stock.classList.add(
           "active"
         );
+
       }
 
 
       const name =
-        document.createElement("span");
+        document.createElement(
+          "span"
+        );
 
       name.className =
         "stock-name";
@@ -828,6 +1885,7 @@ function renderStocks() {
 
       settingsButton.textContent =
         "⚙️";
+
 
       settingsButton.addEventListener(
         "click",
@@ -879,9 +1937,12 @@ function renderStocks() {
             selectedStock ===
             stockName
           ) {
+
             selectedStock =
               "ALL";
+
           }
+
 
           renderStocks();
 
@@ -913,9 +1974,9 @@ function renderStocks() {
 
 
 /*
-==========================================
+==================================================
 종목 추가
-==========================================
+==================================================
 */
 
 addButton.addEventListener(
@@ -927,19 +1988,25 @@ addButton.addEventListener(
         "추가할 종목 이름을 입력하세요."
       );
 
+
     if (!stockName) {
       return;
     }
 
+
     const cleanName =
       stockName.trim();
+
 
     if (!cleanName) {
       return;
     }
 
+
     if (
-      stocks.includes(cleanName)
+      stocks.includes(
+        cleanName
+      )
     ) {
 
       alert(
@@ -947,10 +2014,13 @@ addButton.addEventListener(
       );
 
       return;
+
     }
 
 
-    stocks.push(cleanName);
+    stocks.push(
+      cleanName
+    );
 
     saveStocks();
 
@@ -963,9 +2033,9 @@ addButton.addEventListener(
 
 
 /*
-==========================================
+==================================================
 키워드
-==========================================
+==================================================
 */
 
 function openKeywordModal(
@@ -979,13 +2049,16 @@ function openKeywordModal(
     stockName +
     " 관련 키워드";
 
+
   const keywords =
     stockKeywords[
       stockName
     ] || [];
 
+
   keywordInput.value =
     keywords.join(", ");
+
 
   keywordModal.classList.add(
     "show"
@@ -1010,15 +2083,22 @@ saveKeywordButton.addEventListener(
       return;
     }
 
+
     const keywords =
       keywordInput.value
         .split(",")
-        .map(function(keyword) {
-          return keyword.trim();
-        })
-        .filter(function(keyword) {
-          return keyword.length > 0;
-        });
+        .map(
+          function(keyword) {
+            return keyword.trim();
+          }
+        )
+        .filter(
+          function(keyword) {
+            return (
+              keyword.length > 0
+            );
+          }
+        );
 
 
     stockKeywords[
@@ -1084,16 +2164,59 @@ keywordModal.addEventListener(
 
 
 /*
-==========================================
+==================================================
+필터
+==================================================
+*/
+
+filterButtons.forEach(
+  function(button) {
+
+    button.addEventListener(
+      "click",
+      function() {
+
+        currentFilter =
+          button.dataset.filter;
+
+
+        filterButtons.forEach(
+          function(otherButton) {
+
+            otherButton.classList.remove(
+              "active"
+            );
+
+          }
+        );
+
+
+        button.classList.add(
+          "active"
+        );
+
+
+        renderCurrentNews();
+
+      }
+    );
+
+  }
+);
+
+
+/*
+==================================================
 전체 / 새로고침
-==========================================
+==================================================
 */
 
 allStockButton.addEventListener(
   "click",
   function() {
 
-    selectedStock = "ALL";
+    selectedStock =
+      "ALL";
 
     renderStocks();
 
@@ -1108,7 +2231,8 @@ refreshButton.addEventListener(
   function() {
 
     if (
-      selectedStock === "ALL"
+      selectedStock ===
+      "ALL"
     ) {
 
       loadAllNews();
@@ -1126,9 +2250,9 @@ refreshButton.addEventListener(
 
 
 /*
-==========================================
+==================================================
 뉴스 API
-==========================================
+==================================================
 */
 
 async function fetchQuery(
@@ -1140,14 +2264,18 @@ async function fetchQuery(
   const response =
     await fetch(
       "/api/news?q=" +
-      encodeURIComponent(query)
+      encodeURIComponent(
+        query
+      )
     );
 
 
   if (!response.ok) {
+
     throw new Error(
       "뉴스 호출 실패"
     );
+
   }
 
 
@@ -1157,16 +2285,19 @@ async function fetchQuery(
 
   return (
     data.items || []
-  ).map(function(item) {
+  ).map(
+    function(item) {
 
-    return {
-      ...item,
-      stock: stockName,
-      matchedKeyword:
-        matchedKeyword
-    };
+      return {
+        ...item,
+        stock:
+          stockName,
+        matchedKeyword:
+          matchedKeyword
+      };
 
-  });
+    }
+  );
 
 }
 
@@ -1174,6 +2305,11 @@ async function fetchQuery(
 async function fetchStockNews(
   stockName
 ) {
+
+  /*
+  NewsData 무료 할당량 보호를 위해
+  사용자 키워드는 최대 2개만 실제 검색
+  */
 
   const keywords =
     (
@@ -1225,30 +2361,38 @@ async function fetchStockNews(
 
 
 /*
-==========================================
+==================================================
 전체 뉴스
-==========================================
+==================================================
 */
 
 async function loadAllNews() {
 
-  selectedStock = "ALL";
+  selectedStock =
+    "ALL";
 
   renderStocks();
 
+
   newsHeading.textContent =
-    "내 종목 최신 뉴스";
+    "내 종목 투자 뉴스";
+
 
   newsList.innerHTML =
-    '<div class="message">뉴스를 모으는 중...</div>';
+    '<div class="message">투자 관련도를 계산하며 뉴스를 모으는 중...</div>';
 
 
-  if (stocks.length === 0) {
+  if (
+    stocks.length === 0
+  ) {
+
+    currentNews = [];
 
     newsList.innerHTML =
       '<div class="message">등록된 종목이 없습니다.</div>';
 
     return;
+
   }
 
 
@@ -1259,29 +2403,29 @@ async function loadAllNews() {
 
         stocks.map(
           function(stock) {
+
             return fetchStockNews(
               stock
             );
+
           }
         )
 
       );
 
 
-    let allNews =
+    currentNews =
       removeDuplicates(
         results.flat()
       );
 
 
-    allNews.sort(
-      sortByDate
+    currentNews.sort(
+      sortByRelevance
     );
 
 
-    renderNews(
-      allNews
-    );
+    renderCurrentNews();
 
 
   } catch (error) {
@@ -1297,9 +2441,9 @@ async function loadAllNews() {
 
 
 /*
-==========================================
+==================================================
 종목 하나
-==========================================
+==================================================
 */
 
 async function loadSingleStock(
@@ -1308,26 +2452,27 @@ async function loadSingleStock(
 
   newsHeading.textContent =
     stockName +
-    " 최신 뉴스";
+    " 투자 뉴스";
+
 
   newsList.innerHTML =
-    '<div class="message">뉴스를 불러오는 중...</div>';
+    '<div class="message">투자 관련도를 계산하며 뉴스를 불러오는 중...</div>';
 
 
   try {
 
-    const items =
+    currentNews =
       await fetchStockNews(
         stockName
       );
 
-    items.sort(
-      sortByDate
+
+    currentNews.sort(
+      sortByRelevance
     );
 
-    renderNews(
-      items
-    );
+
+    renderCurrentNews();
 
 
   } catch (error) {
@@ -1343,38 +2488,113 @@ async function loadSingleStock(
 
 
 /*
-==========================================
-날짜
-==========================================
+==================================================
+현재 필터 적용
+==================================================
 */
 
-function sortByDate(a, b) {
+function renderCurrentNews() {
 
-  return (
-    new Date(
-      b.pubDate
-    ).getTime() || 0
-  ) -
-  (
-    new Date(
-      a.pubDate
-    ).getTime() || 0
-  );
+  let items =
+    currentNews.slice();
+
+
+  if (
+    currentFilter ===
+    "NEW"
+  ) {
+
+    items =
+      items.filter(
+        function(item) {
+
+          return !isArticleSeen(
+            getArticleKey(item)
+          );
+
+        }
+      );
+
+  }
+
+
+  if (
+    currentFilter ===
+    "ANALYZED"
+  ) {
+
+    items =
+      items.filter(
+        function(item) {
+
+          return Boolean(
+            aiAnalysisCache[
+              getArticleKey(item)
+            ]
+          );
+
+        }
+      );
+
+  }
+
+
+  /*
+  중요 뉴스는
+  AI 분석이 완료된 기사 중
+  중요도 4~5인 기사.
+
+  분석하지 않은 기사를
+  중요하지 않다고 오판해 숨기지 않는다.
+  */
+
+  if (
+    currentFilter ===
+    "IMPORTANT"
+  ) {
+
+    items =
+      items.filter(
+        function(item) {
+
+          const analysis =
+            aiAnalysisCache[
+              getArticleKey(item)
+            ];
+
+
+          return (
+            analysis &&
+            Number(
+              analysis.importance
+            ) >= 4
+          );
+
+        }
+      );
+
+  }
+
+
+  renderNews(items);
 
 }
 
 
 /*
-==========================================
+==================================================
 기사 고유값
-==========================================
+==================================================
 */
 
-function getArticleKey(item) {
+function getArticleKey(
+  item
+) {
 
   if (item.link) {
     return item.link;
   }
+
 
   return (
     "title:" +
@@ -1389,12 +2609,14 @@ function getArticleKey(item) {
 
 
 /*
-==========================================
+==================================================
 NEW
-==========================================
+==================================================
 */
 
-function isArticleSeen(key) {
+function isArticleSeen(
+  key
+) {
 
   return seenArticles.includes(
     key
@@ -1403,13 +2625,19 @@ function isArticleSeen(key) {
 }
 
 
-function markArticleAsSeen(key) {
+function markArticleAsSeen(
+  key
+) {
 
   if (
-    !seenArticles.includes(key)
+    !seenArticles.includes(
+      key
+    )
   ) {
 
-    seenArticles.push(key);
+    seenArticles.push(
+      key
+    );
 
     saveSeenArticles();
 
@@ -1419,25 +2647,34 @@ function markArticleAsSeen(key) {
 
 
 /*
-==========================================
+==================================================
 중복 제거
-==========================================
+==================================================
 */
 
-function removeDuplicates(items) {
+function removeDuplicates(
+  items
+) {
 
   const seen =
     new Set();
+
 
   return items.filter(
     function(item) {
 
       const key =
-        getArticleKey(item);
+        getArticleKey(
+          item
+        );
 
-      if (seen.has(key)) {
+
+      if (
+        seen.has(key)
+      ) {
         return false;
       }
+
 
       seen.add(key);
 
@@ -1450,9 +2687,9 @@ function removeDuplicates(items) {
 
 
 /*
-==========================================
+==================================================
 AI 요청
-==========================================
+==================================================
 */
 
 async function requestAIAnalysis(
@@ -1507,9 +2744,7 @@ async function requestAIAnalysis(
   }
 
 
-  if (
-    !data.analysis
-  ) {
+  if (!data.analysis) {
 
     throw new Error(
       "AI 분석 결과 없음"
@@ -1524,16 +2759,18 @@ async function requestAIAnalysis(
 
 
 /*
-==========================================
-영향 표시
-==========================================
+==================================================
+영향
+==================================================
 */
 
 function getImpactDisplay(
   impact
 ) {
 
-  if (impact === "긍정") {
+  if (
+    impact === "긍정"
+  ) {
 
     return {
       icon: "🟢",
@@ -1544,7 +2781,9 @@ function getImpactDisplay(
   }
 
 
-  if (impact === "부정") {
+  if (
+    impact === "부정"
+  ) {
 
     return {
       icon: "🔴",
@@ -1555,7 +2794,9 @@ function getImpactDisplay(
   }
 
 
-  if (impact === "불확실") {
+  if (
+    impact === "불확실"
+  ) {
 
     return {
       icon: "🟡",
@@ -1576,9 +2817,9 @@ function getImpactDisplay(
 
 
 /*
-==========================================
-중요도 별
-==========================================
+==================================================
+별
+==================================================
 */
 
 function getStars(
@@ -1586,7 +2827,9 @@ function getStars(
 ) {
 
   let number =
-    Number(importance);
+    Number(
+      importance
+    );
 
 
   if (
@@ -1602,16 +2845,18 @@ function getStars(
 
   return (
     "★".repeat(number) +
-    "☆".repeat(5 - number)
+    "☆".repeat(
+      5 - number
+    )
   );
 
 }
 
 
 /*
-==========================================
-AI 카드 표시
-==========================================
+==================================================
+AI 카드
+==================================================
 */
 
 function displayAIAnalysis(
@@ -1624,10 +2869,6 @@ function displayAIAnalysis(
   container.className =
     "ai-result show";
 
-
-  /*
-  제목
-  */
 
   const title =
     document.createElement(
@@ -1724,10 +2965,6 @@ function displayAIAnalysis(
     "ai-status-row";
 
 
-  /*
-  영향
-  */
-
   const impactBox =
     document.createElement(
       "div"
@@ -1754,6 +2991,7 @@ function displayAIAnalysis(
       "div"
     );
 
+
   const impactDisplay =
     getImpactDisplay(
       analysis.impact
@@ -1779,10 +3017,6 @@ function displayAIAnalysis(
     impactValue
   );
 
-
-  /*
-  중요도
-  */
 
   const importanceBox =
     document.createElement(
@@ -1812,7 +3046,6 @@ function displayAIAnalysis(
 
   importanceValue.className =
     "importance-stars";
-
 
   importanceValue.textContent =
     getStars(
@@ -1888,6 +3121,7 @@ function displayAIAnalysis(
     reason
   );
 
+
   container.appendChild(
     reasonSection
   );
@@ -1896,22 +3130,44 @@ function displayAIAnalysis(
 
 
 /*
-==========================================
+==================================================
 뉴스 표시
-==========================================
+==================================================
 */
 
-function renderNews(items) {
+function renderNews(
+  items
+) {
 
   newsList.innerHTML = "";
 
 
-  if (items.length === 0) {
+  if (
+    items.length === 0
+  ) {
+
+    let message =
+      "조건에 맞는 뉴스가 없습니다.";
+
+
+    if (
+      currentFilter ===
+      "IMPORTANT"
+    ) {
+
+      message =
+        "아직 AI가 중요하다고 분석한 뉴스가 없습니다. 👻 분석 후 중요도 ★★★★☆ 이상이면 여기에 표시됩니다.";
+
+    }
+
 
     newsList.innerHTML =
-      '<div class="message">뉴스가 없습니다.</div>';
+      '<div class="message">' +
+      message +
+      '</div>';
 
     return;
+
   }
 
 
@@ -1919,7 +3175,15 @@ function renderNews(items) {
     function(item) {
 
       const articleKey =
-        getArticleKey(item);
+        getArticleKey(
+          item
+        );
+
+
+      const cachedAnalysis =
+        aiAnalysisCache[
+          articleKey
+        ];
 
 
       const card =
@@ -1938,14 +3202,16 @@ function renderNews(items) {
 
 
       if (isNew) {
+
         card.classList.add(
           "is-new"
         );
+
       }
 
 
       /*
-      배지
+      상단 배지
       */
 
       const top =
@@ -2003,7 +3269,8 @@ function renderNews(items) {
 
 
       if (
-        item.source === "GLOBAL"
+        item.source ===
+        "GLOBAL"
       ) {
 
         sourceBadge.className =
@@ -2054,6 +3321,43 @@ function renderNews(items) {
 
 
       /*
+      이미 AI 분석된 뉴스라면
+      목록에서 바로 신호등 + 별
+      */
+
+      if (cachedAnalysis) {
+
+        const analysisBadge =
+          document.createElement(
+            "span"
+          );
+
+        analysisBadge.className =
+          "analysis-badge";
+
+
+        const display =
+          getImpactDisplay(
+            cachedAnalysis.impact
+          );
+
+
+        analysisBadge.textContent =
+          display.icon +
+          " " +
+          getStars(
+            cachedAnalysis.importance
+          );
+
+
+        top.appendChild(
+          analysisBadge
+        );
+
+      }
+
+
+      /*
       제목
       */
 
@@ -2096,9 +3400,13 @@ function renderNews(items) {
             articleKey
           );
 
+
           if (newBadge) {
+
             newBadge.remove();
+
           }
+
 
           card.classList.remove(
             "is-new"
@@ -2174,22 +3482,11 @@ function renderNews(items) {
         "ai-result";
 
 
-      /*
-      이미 분석한 기사라면
-      저장된 결과 즉시 표시
-      */
-
-      if (
-        aiAnalysisCache[
-          articleKey
-        ]
-      ) {
+      if (cachedAnalysis) {
 
         displayAIAnalysis(
           aiResult,
-          aiAnalysisCache[
-            articleKey
-          ]
+          cachedAnalysis
         );
 
         aiButton.textContent =
@@ -2201,18 +3498,9 @@ function renderNews(items) {
       }
 
 
-      /*
-      새 AI 분석
-      */
-
       aiButton.addEventListener(
         "click",
         async function() {
-
-          /*
-          혹시 캐시가 있으면
-          API를 부르지 않는다.
-          */
 
           if (
             aiAnalysisCache[
@@ -2244,6 +3532,7 @@ function renderNews(items) {
           aiButton.textContent =
             "👻 분석 중...";
 
+
           aiResult.className =
             "ai-result show";
 
@@ -2259,10 +3548,6 @@ function renderNews(items) {
               );
 
 
-            /*
-            분석 저장
-            */
-
             aiAnalysisCache[
               articleKey
             ] =
@@ -2271,10 +3556,6 @@ function renderNews(items) {
 
             saveAIAnalysisCache();
 
-
-            /*
-            화면 표시
-            */
 
             displayAIAnalysis(
               aiResult,
@@ -2286,11 +3567,45 @@ function renderNews(items) {
               "👻 분석 완료";
 
 
+            /*
+            분석이 끝나면
+            상단에도 신호등 + 별 표시
+            */
+
+            const analysisBadge =
+              document.createElement(
+                "span"
+              );
+
+            analysisBadge.className =
+              "analysis-badge";
+
+
+            const display =
+              getImpactDisplay(
+                analysis.impact
+              );
+
+
+            analysisBadge.textContent =
+              display.icon +
+              " " +
+              getStars(
+                analysis.importance
+              );
+
+
+            top.appendChild(
+              analysisBadge
+            );
+
+
           } catch (error) {
 
             console.error(error);
 
-            aiResult.innerHTML = "";
+            aiResult.innerHTML =
+              "";
 
 
             const errorText =
@@ -2357,12 +3672,14 @@ function renderNews(items) {
 
 
 /*
-==========================================
+==================================================
 HTML 제거
-==========================================
+==================================================
 */
 
-function removeHtmlTags(text) {
+function removeHtmlTags(
+  text
+) {
 
   const temp =
     document.createElement(
@@ -2371,6 +3688,7 @@ function removeHtmlTags(text) {
 
   temp.innerHTML =
     text || "";
+
 
   return (
     temp.textContent ||
@@ -2382,17 +3700,20 @@ function removeHtmlTags(text) {
 
 
 /*
-==========================================
+==================================================
 URL 검사
-==========================================
+==================================================
 */
 
-function safeUrl(url) {
+function safeUrl(
+  url
+) {
 
   try {
 
     const parsed =
       new URL(url);
+
 
     if (
       parsed.protocol === "https:" ||
@@ -2405,15 +3726,16 @@ function safeUrl(url) {
 
   } catch (error) {}
 
+
   return "#";
 
 }
 
 
 /*
-==========================================
-날짜 표시
-==========================================
+==================================================
+날짜
+==================================================
 */
 
 function formatDate(
@@ -2421,7 +3743,9 @@ function formatDate(
 ) {
 
   if (!dateString) {
+
     return "날짜 정보 없음";
+
   }
 
 
@@ -2456,9 +3780,9 @@ function formatDate(
 
 
 /*
-==========================================
+==================================================
 시작
-==========================================
+==================================================
 */
 
 renderStocks();

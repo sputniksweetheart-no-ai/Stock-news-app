@@ -171,10 +171,6 @@
       font-size: 12px;
     }
 
-    /*
-      새로 추가된 NEW 배지
-    */
-
     .new-badge {
       background: #e53935;
       color: white;
@@ -210,6 +206,76 @@
       font-size: 13px;
       color: #999;
     }
+
+
+    /*
+      AI 분석 버튼
+    */
+
+    .ai-button {
+      margin-top: 14px;
+      border: none;
+      background: #111827;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .ai-button:hover {
+      opacity: 0.9;
+    }
+
+    .ai-button:disabled {
+      opacity: 0.55;
+      cursor: default;
+    }
+
+
+    /*
+      AI 분석 결과 박스
+    */
+
+    .ai-result {
+      display: none;
+      margin-top: 14px;
+      padding: 16px;
+      background: #f8f7ff;
+      border: 1px solid #e5e1ff;
+      border-radius: 12px;
+      line-height: 1.6;
+    }
+
+    .ai-result.show {
+      display: block;
+    }
+
+    .ai-result-title {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .ai-section {
+      margin-top: 12px;
+    }
+
+    .ai-label {
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+
+    .importance {
+      font-size: 17px;
+      letter-spacing: 1px;
+    }
+
+
+    /*
+      메시지
+    */
 
     .message {
       background: white;
@@ -340,7 +406,6 @@
 
     </div>
 
-
     <div class="keyword-info">
       ⚙️ 종목별 관련 키워드 설정 ·
       처음 보는 뉴스에는 NEW가 표시됩니다.
@@ -432,7 +497,7 @@
 
 /*
 ==================================================
-기본 화면 요소
+화면 요소
 ==================================================
 */
 
@@ -490,7 +555,7 @@ let stocks =
 
 /*
 ==================================================
-종목별 관련 키워드
+종목별 키워드
 ==================================================
 */
 
@@ -504,14 +569,6 @@ let stockKeywords =
 /*
 ==================================================
 읽은 뉴스 기록
-
-기사 주소를 저장한다.
-
-예:
-[
-  "https://news...",
-  "https://another-news..."
-]
 ==================================================
 */
 
@@ -530,12 +587,6 @@ let editingStock =
 
 
 
-/*
-==================================================
-종목 저장
-==================================================
-*/
-
 function saveStocks() {
 
   localStorage.setItem(
@@ -546,12 +597,6 @@ function saveStocks() {
 }
 
 
-
-/*
-==================================================
-키워드 저장
-==================================================
-*/
 
 function saveKeywords() {
 
@@ -564,28 +609,14 @@ function saveKeywords() {
 
 
 
-/*
-==================================================
-읽은 뉴스 저장
-==================================================
-*/
-
 function saveSeenArticles() {
 
-  /*
-    기록이 끝없이 커지는 것을 막기 위해
-    최근 1000개만 보관
-  */
-
   if (
-    seenArticles.length >
-    1000
+    seenArticles.length > 1000
   ) {
 
     seenArticles =
-      seenArticles.slice(
-        -1000
-      );
+      seenArticles.slice(-1000);
 
   }
 
@@ -601,7 +632,7 @@ function saveSeenArticles() {
 
 /*
 ==================================================
-종목 버튼 그리기
+종목 표시
 ==================================================
 */
 
@@ -629,8 +660,7 @@ function renderStocks() {
 
 
       if (
-        selectedStock ===
-        stockName
+        selectedStock === stockName
       ) {
 
         stock.classList.add(
@@ -639,10 +669,6 @@ function renderStocks() {
 
       }
 
-
-      /*
-        종목 이름
-      */
 
       const name =
         document.createElement("span");
@@ -671,9 +697,6 @@ function renderStocks() {
       );
 
 
-      /*
-        키워드 설정 버튼
-      */
 
       const settingsButton =
         document.createElement("button");
@@ -702,9 +725,6 @@ function renderStocks() {
       );
 
 
-      /*
-        종목 삭제 버튼
-      */
 
       const deleteButton =
         document.createElement("button");
@@ -740,8 +760,7 @@ function renderStocks() {
 
 
           if (
-            selectedStock ===
-            stockName
+            selectedStock === stockName
           ) {
 
             selectedStock =
@@ -785,7 +804,7 @@ function renderStocks() {
 
 /*
 ==================================================
-새 종목 추가
+종목 추가
 ==================================================
 */
 
@@ -800,9 +819,7 @@ addButton.addEventListener(
 
 
     if (!stockName) {
-
       return;
-
     }
 
 
@@ -811,16 +828,12 @@ addButton.addEventListener(
 
 
     if (!cleanName) {
-
       return;
-
     }
 
 
     if (
-      stocks.includes(
-        cleanName
-      )
+      stocks.includes(cleanName)
     ) {
 
       alert(
@@ -850,7 +863,7 @@ addButton.addEventListener(
 
 /*
 ==================================================
-키워드 설정창 열기
+키워드 설정
 ==================================================
 */
 
@@ -888,12 +901,6 @@ function openKeywordModal(
 
 
 
-/*
-==================================================
-키워드 설정 취소
-==================================================
-*/
-
 cancelKeywordButton.addEventListener(
   "click",
   function() {
@@ -905,20 +912,12 @@ cancelKeywordButton.addEventListener(
 
 
 
-/*
-==================================================
-키워드 저장
-==================================================
-*/
-
 saveKeywordButton.addEventListener(
   "click",
   function() {
 
     if (!editingStock) {
-
       return;
-
     }
 
 
@@ -935,18 +934,11 @@ saveKeywordButton.addEventListener(
         .filter(
           function(keyword) {
 
-            return (
-              keyword.length >
-              0
-            );
+            return keyword.length > 0;
 
           }
         );
 
-
-    /*
-      같은 키워드 중복 제거
-    */
 
     const uniqueKeywords =
       [...new Set(keywords)];
@@ -1001,10 +993,6 @@ function closeKeywordModal() {
 
 
 
-/*
-  설정창 바깥쪽을 누르면 닫기
-*/
-
 keywordModal.addEventListener(
   "click",
   function(event) {
@@ -1025,7 +1013,7 @@ keywordModal.addEventListener(
 
 /*
 ==================================================
-전체 버튼
+전체 / 새로고침
 ==================================================
 */
 
@@ -1045,19 +1033,12 @@ allStockButton.addEventListener(
 
 
 
-/*
-==================================================
-새로고침
-==================================================
-*/
-
 refreshButton.addEventListener(
   "click",
   function() {
 
     if (
-      selectedStock ===
-      "ALL"
+      selectedStock === "ALL"
     ) {
 
       loadAllNews();
@@ -1077,7 +1058,7 @@ refreshButton.addEventListener(
 
 /*
 ==================================================
-하나의 검색어로 뉴스 가져오기
+뉴스 API
 ==================================================
 */
 
@@ -1090,9 +1071,7 @@ async function fetchQuery(
   const response =
     await fetch(
       "/api/news?q=" +
-      encodeURIComponent(
-        query
-      )
+      encodeURIComponent(query)
     );
 
 
@@ -1134,15 +1113,6 @@ async function fetchQuery(
 
 
 
-/*
-==================================================
-한 종목 뉴스 가져오기
-
-회사명 +
-키워드 최대 2개
-==================================================
-*/
-
 async function fetchStockNews(
   stockName
 ) {
@@ -1162,10 +1132,6 @@ async function fetchStockNews(
     [];
 
 
-  /*
-    회사명
-  */
-
   requests.push(
 
     fetchQuery(
@@ -1176,10 +1142,6 @@ async function fetchStockNews(
 
   );
 
-
-  /*
-    관련 키워드
-  */
 
   keywords.forEach(
     function(keyword) {
@@ -1204,17 +1166,9 @@ async function fetchStockNews(
     );
 
 
-  let items =
-    results.flat();
-
-
-  items =
-    removeDuplicates(
-      items
-    );
-
-
-  return items;
+  return removeDuplicates(
+    results.flat()
+  );
 
 }
 
@@ -1222,7 +1176,7 @@ async function fetchStockNews(
 
 /*
 ==================================================
-전체 종목 뉴스
+전체 뉴스
 ==================================================
 */
 
@@ -1240,7 +1194,7 @@ async function loadAllNews() {
 
 
   newsList.innerHTML =
-    '<div class="message">내 종목과 관련 키워드 뉴스를 모으는 중...</div>';
+    '<div class="message">뉴스를 모으는 중...</div>';
 
 
   if (
@@ -1313,7 +1267,7 @@ async function loadAllNews() {
 
 /*
 ==================================================
-한 종목 뉴스
+종목 하나
 ==================================================
 */
 
@@ -1366,7 +1320,7 @@ async function loadSingleStock(
 
 /*
 ==================================================
-날짜 최신순
+날짜 정렬
 ==================================================
 */
 
@@ -1397,12 +1351,7 @@ function sortByDate(
 
 /*
 ==================================================
-기사 고유번호 만들기
-
-기본적으로 기사 URL을 사용한다.
-
-URL이 없는 경우
-기사 제목을 대신 사용한다.
+기사 고유값
 ==================================================
 */
 
@@ -1410,9 +1359,7 @@ function getArticleKey(
   item
 ) {
 
-  if (
-    item.link
-  ) {
+  if (item.link) {
 
     return item.link;
 
@@ -1432,12 +1379,6 @@ function getArticleKey(
 
 
 
-/*
-==================================================
-읽은 기사인지 확인
-==================================================
-*/
-
 function isArticleSeen(
   articleKey
 ) {
@@ -1449,12 +1390,6 @@ function isArticleSeen(
 }
 
 
-
-/*
-==================================================
-기사를 읽은 것으로 저장
-==================================================
-*/
 
 function markArticleAsSeen(
   articleKey
@@ -1481,7 +1416,7 @@ function markArticleAsSeen(
 
 /*
 ==================================================
-중복 기사 제거
+중복 제거
 ==================================================
 */
 
@@ -1497,15 +1432,11 @@ function removeDuplicates(
     function(item) {
 
       const key =
-        getArticleKey(
-          item
-        );
+        getArticleKey(item);
 
 
       if (
-        seen.has(
-          key
-        )
+        seen.has(key)
       ) {
 
         return false;
@@ -1513,10 +1444,7 @@ function removeDuplicates(
       }
 
 
-      seen.add(
-        key
-      );
-
+      seen.add(key);
 
       return true;
 
@@ -1529,7 +1457,7 @@ function removeDuplicates(
 
 /*
 ==================================================
-뉴스 화면 그리기
+뉴스 출력
 ==================================================
 */
 
@@ -1557,9 +1485,7 @@ function renderNews(
     function(item) {
 
       const articleKey =
-        getArticleKey(
-          item
-        );
+        getArticleKey(item);
 
 
       const isNew =
@@ -1578,9 +1504,7 @@ function renderNews(
         "news-card";
 
 
-      if (
-        isNew
-      ) {
+      if (isNew) {
 
         card.classList.add(
           "is-new"
@@ -1591,9 +1515,7 @@ function renderNews(
 
 
       /*
-      ---------------------------
-      상단 배지 영역
-      ---------------------------
+        배지 영역
       */
 
       const top =
@@ -1606,18 +1528,11 @@ function renderNews(
         "news-top";
 
 
-
-      /*
-        NEW 배지
-      */
-
       let newBadge =
         null;
 
 
-      if (
-        isNew
-      ) {
+      if (isNew) {
 
         newBadge =
           document.createElement(
@@ -1641,10 +1556,6 @@ function renderNews(
 
 
 
-      /*
-        종목 배지
-      */
-
       const stockBadge =
         document.createElement(
           "span"
@@ -1665,10 +1576,6 @@ function renderNews(
 
 
 
-      /*
-        뉴스 출처
-      */
-
       const sourceBadge =
         document.createElement(
           "span"
@@ -1676,8 +1583,7 @@ function renderNews(
 
 
       if (
-        item.source ===
-        "GLOBAL"
+        item.source === "GLOBAL"
       ) {
 
         sourceBadge.className =
@@ -1710,10 +1616,6 @@ function renderNews(
 
 
 
-      /*
-        관련 키워드 배지
-      */
-
       if (
         item.matchedKeyword
       ) {
@@ -1741,9 +1643,7 @@ function renderNews(
 
 
       /*
-      ---------------------------
-      뉴스 제목
-      ---------------------------
+        기사 제목
       */
 
       const titleBox =
@@ -1782,14 +1682,6 @@ function renderNews(
         "noopener noreferrer";
 
 
-
-      /*
-        ★ 핵심
-
-        뉴스 제목을 누르면
-        읽은 뉴스로 저장
-      */
-
       link.addEventListener(
         "click",
         function() {
@@ -1799,14 +1691,7 @@ function renderNews(
           );
 
 
-          /*
-            화면에서도 바로
-            NEW 표시 제거
-          */
-
-          if (
-            newBadge
-          ) {
+          if (newBadge) {
 
             newBadge.remove();
 
@@ -1828,9 +1713,7 @@ function renderNews(
 
 
       /*
-      ---------------------------
-      뉴스 설명
-      ---------------------------
+        설명
       */
 
       const description =
@@ -1851,9 +1734,7 @@ function renderNews(
 
 
       /*
-      ---------------------------
-      날짜
-      ---------------------------
+        날짜
       */
 
       const meta =
@@ -1874,28 +1755,144 @@ function renderNews(
 
 
       /*
-      ---------------------------
-      카드 완성
-      ---------------------------
+      ==================================================
+      AI 분석 버튼
+      ==================================================
+      */
+
+      const aiButton =
+        document.createElement(
+          "button"
+        );
+
+
+      aiButton.className =
+        "ai-button";
+
+
+      aiButton.textContent =
+        "✨ AI 분석";
+
+
+
+      /*
+        AI 결과가 들어갈 공간
+      */
+
+      const aiResult =
+        document.createElement(
+          "div"
+        );
+
+
+      aiResult.className =
+        "ai-result";
+
+
+
+      /*
+        버튼 클릭
+      */
+
+      aiButton.addEventListener(
+        "click",
+        function() {
+
+          /*
+            아직 실제 AI는 연결하지 않았다.
+
+            다음 단계에서 이 부분이
+            /api/analyze 를 호출하게 된다.
+          */
+
+
+          aiButton.disabled =
+            true;
+
+
+          aiButton.textContent =
+            "✨ 분석 중...";
+
+
+          aiResult.classList.add(
+            "show"
+          );
+
+
+          aiResult.innerHTML =
+            "";
+
+
+          const loading =
+            document.createElement(
+              "div"
+            );
+
+
+          loading.textContent =
+            "AI가 기사를 분석하고 있습니다...";
+
+
+          aiResult.appendChild(
+            loading
+          );
+
+
+
+          /*
+            실제 AI처럼 보이도록
+            잠깐 기다린 뒤 테스트 결과 표시
+
+            이것은 API 호출이 아니다.
+          */
+
+          setTimeout(
+            function() {
+
+              showDemoAnalysis(
+                aiResult,
+                item
+              );
+
+
+              aiButton.textContent =
+                "✓ AI 분석 완료";
+
+            },
+            700
+          );
+
+        }
+      );
+
+
+
+      /*
+        카드 완성
       */
 
       card.appendChild(
         top
       );
 
-
       card.appendChild(
         titleBox
       );
-
 
       card.appendChild(
         description
       );
 
-
       card.appendChild(
         meta
+      );
+
+      card.appendChild(
+        aiButton
+      );
+
+      card.appendChild(
+        aiResult
       );
 
 
@@ -1912,7 +1909,276 @@ function renderNews(
 
 /*
 ==================================================
-HTML 태그 제거
+테스트용 AI 분석
+
+★ 아직 진짜 AI가 아니다.
+
+다음 단계에서 이 함수 대신
+/api/analyze 서버를 호출한다.
+==================================================
+*/
+
+function showDemoAnalysis(
+  container,
+  item
+) {
+
+  container.innerHTML =
+    "";
+
+
+  const title =
+    document.createElement(
+      "div"
+    );
+
+
+  title.className =
+    "ai-result-title";
+
+
+  title.textContent =
+    "🤖 AI 분석 미리보기";
+
+
+  container.appendChild(
+    title
+  );
+
+
+
+  /*
+    요약
+  */
+
+  const summary =
+    document.createElement(
+      "div"
+    );
+
+
+  summary.className =
+    "ai-section";
+
+
+  const summaryLabel =
+    document.createElement(
+      "div"
+    );
+
+
+  summaryLabel.className =
+    "ai-label";
+
+
+  summaryLabel.textContent =
+    "📝 3줄 요약";
+
+
+  const summaryText =
+    document.createElement(
+      "div"
+    );
+
+
+  summaryText.textContent =
+    "• 기사 핵심 내용을 AI가 요약합니다.\n" +
+    "• 투자자가 알아야 할 내용을 추립니다.\n" +
+    "• 다음 단계에서 실제 AI 분석으로 교체됩니다.";
+
+
+  summaryText.style.whiteSpace =
+    "pre-line";
+
+
+  summary.appendChild(
+    summaryLabel
+  );
+
+
+  summary.appendChild(
+    summaryText
+  );
+
+
+  container.appendChild(
+    summary
+  );
+
+
+
+  /*
+    종목 영향
+  */
+
+  const impact =
+    document.createElement(
+      "div"
+    );
+
+
+  impact.className =
+    "ai-section";
+
+
+  const impactLabel =
+    document.createElement(
+      "div"
+    );
+
+
+  impactLabel.className =
+    "ai-label";
+
+
+  impactLabel.textContent =
+    "📈 내 종목 영향";
+
+
+  const impactText =
+    document.createElement(
+      "div"
+    );
+
+
+  impactText.textContent =
+    item.stock +
+    "에 어떤 영향을 줄 수 있는지 AI가 분석할 예정입니다.";
+
+
+  impact.appendChild(
+    impactLabel
+  );
+
+
+  impact.appendChild(
+    impactText
+  );
+
+
+  container.appendChild(
+    impact
+  );
+
+
+
+  /*
+    이유
+  */
+
+  const reason =
+    document.createElement(
+      "div"
+    );
+
+
+  reason.className =
+    "ai-section";
+
+
+  const reasonLabel =
+    document.createElement(
+      "div"
+    );
+
+
+  reasonLabel.className =
+    "ai-label";
+
+
+  reasonLabel.textContent =
+    "💡 이유";
+
+
+  const reasonText =
+    document.createElement(
+      "div"
+    );
+
+
+  reasonText.textContent =
+    "매출, 경쟁력, 수요, 공급망 등 투자 관점에서 관련성을 설명합니다.";
+
+
+  reason.appendChild(
+    reasonLabel
+  );
+
+
+  reason.appendChild(
+    reasonText
+  );
+
+
+  container.appendChild(
+    reason
+  );
+
+
+
+  /*
+    중요도
+  */
+
+  const importance =
+    document.createElement(
+      "div"
+    );
+
+
+  importance.className =
+    "ai-section";
+
+
+  const importanceLabel =
+    document.createElement(
+      "div"
+    );
+
+
+  importanceLabel.className =
+    "ai-label";
+
+
+  importanceLabel.textContent =
+    "🔥 중요도";
+
+
+  const importanceText =
+    document.createElement(
+      "div"
+    );
+
+
+  importanceText.className =
+    "importance";
+
+
+  importanceText.textContent =
+    "★★★★☆  (테스트)";
+
+
+  importance.appendChild(
+    importanceLabel
+  );
+
+
+  importance.appendChild(
+    importanceText
+  );
+
+
+  container.appendChild(
+    importance
+  );
+
+}
+
+
+
+/*
+==================================================
+HTML 제거
 ==================================================
 */
 
@@ -1942,9 +2208,7 @@ function removeHtmlTags(
 
 /*
 ==================================================
-외부 링크 안전 검사
-
-http / https만 허용
+안전한 URL
 ==================================================
 */
 
@@ -1955,16 +2219,12 @@ function safeUrl(
   try {
 
     const parsed =
-      new URL(
-        url
-      );
+      new URL(url);
 
 
     if (
-      parsed.protocol ===
-        "https:" ||
-      parsed.protocol ===
-        "http:"
+      parsed.protocol === "https:" ||
+      parsed.protocol === "http:"
     ) {
 
       return url;
@@ -1984,7 +2244,7 @@ function safeUrl(
 
 /*
 ==================================================
-날짜 표시
+날짜
 ==================================================
 */
 
@@ -1992,9 +2252,7 @@ function formatDate(
   dateString
 ) {
 
-  if (
-    !dateString
-  ) {
+  if (!dateString) {
 
     return "날짜 정보 없음";
 
@@ -2043,7 +2301,7 @@ function formatDate(
 
 /*
 ==================================================
-앱 시작
+시작
 ==================================================
 */
 

@@ -1,27 +1,12 @@
 export default async function handler(req, res) {
 
-  /*
-  ==========================================
-  POST 요청만 허용
-  ==========================================
-  */
-
   if (req.method !== "POST") {
-
     return res.status(405).json({
       error: "POST 요청만 사용할 수 있습니다."
     });
-
   }
 
-
   try {
-
-    /*
-    ==========================================
-    브라우저에서 받은 데이터
-    ==========================================
-    */
 
     const {
       stock,
@@ -29,55 +14,69 @@ export default async function handler(req, res) {
       description
     } = req.body || {};
 
-
     if (!title) {
-
       return res.status(400).json({
         error: "기사 제목이 없습니다."
       });
-
     }
 
-
-    /*
-    ==========================================
-    입력값 길이 제한
-    ==========================================
-    */
-
     const safeStock =
-      String(stock || "")
-        .slice(0, 100);
-
+      String(stock || "").slice(0, 100);
 
     const safeTitle =
-      String(title || "")
-        .slice(0, 1000);
-
+      String(title || "").slice(0, 1000);
 
     const safeDescription =
-      String(description || "")
-        .slice(0, 4000);
-
+      String(description || "").slice(0, 4000);
 
 
     /*
     ==========================================
-    Gemini에게 줄 지시문
+    AI 분석 기준
     ==========================================
     */
 
     const prompt = `
 너는 개인 투자자를 위한 뉴스 분석 도우미다.
 
-아래에 제공된 기사 제목과 설명만을 바탕으로 분석하라.
+아래에 제공된 기사 제목과 설명만을 바탕으로
+"${safeStock}" 종목에 미칠 수 있는 영향을 분석하라.
 
-중요한 규칙:
-- 제공되지 않은 사실을 만들어내지 마라.
-- 기사 원문 전체를 읽었다고 가정하지 마라.
-- 정보가 부족하면 "정보 부족"이라고 명시하라.
-- 매수 또는 매도를 권유하지 마라.
-- 과도하게 긍정적이거나 부정적으로 해석하지 마라.
+[중요 원칙]
+
+1. 기사 원문 전체를 읽었다고 가정하지 마라.
+
+2. 제공된 정보에 없는 사실을 만들어내지 마라.
+
+3. 정보가 부족하면 불확실하다고 판단하라.
+
+4. 매수 또는 매도를 권유하지 마라.
+
+5. 단순히 당일 주가가 올랐다는 이유만으로
+   "긍정"이라고 판단하지 마라.
+
+6. 단순히 당일 주가가 떨어졌다는 이유만으로
+   "부정"이라고 판단하지 마라.
+
+7. 가능하면 다음과 같은 기업의 펀더멘털을 중심으로 판단하라.
+
+   - 매출
+   - 이익
+   - 비용
+   - 수요
+   - 공급
+   - 시장점유율
+   - 경쟁력
+   - 기술력
+   - 신규 사업
+   - 규제
+   - 고객
+   - 투자
+   - 생산능력
+
+8. 거시경제 뉴스가 해당 기업에 미치는 연결고리가
+   명확하지 않다면 중립 또는 불확실로 판단하라.
+
 
 관심 종목:
 ${safeStock}
@@ -88,43 +87,53 @@ ${safeTitle}
 기사 설명:
 ${safeDescription}
 
-반드시 다음 형식으로 한국어로 답하라.
 
-[3줄 요약]
-• 핵심 내용 1
-• 핵심 내용 2
-• 핵심 내용 3
+반드시 아래 JSON 형식으로만 답하라.
 
-[종목 영향]
-긍정 / 부정 / 중립 / 불확실 중 하나
+{
+  "summary": [
+    "첫 번째 핵심 요약",
+    "두 번째 핵심 요약",
+    "세 번째 핵심 요약"
+  ],
+  "impact": "긍정",
+  "importance": 3,
+  "reason": "해당 종목에 미칠 수 있는 영향을 설명"
+}
 
-[이유]
-해당 뉴스가 ${safeStock}에 어떤 의미가 있을 수 있는지
-2~3문장으로 설명하라.
 
-[중요도]
-1~5 중 숫자 하나
+impact는 반드시 다음 중 하나만 사용한다.
 
-중요도 기준:
-1 = 종목과 관련성이 매우 낮음
-2 = 참고할 만함
+"긍정"
+"부정"
+"중립"
+"불확실"
+
+
+importance는 반드시 1부터 5까지의 정수다.
+
+1 = 종목과 직접적인 관련성이 매우 낮음
+2 = 참고할 만한 뉴스
 3 = 투자자가 알아둘 필요가 있음
 4 = 실적이나 사업에 의미 있는 뉴스
 5 = 기업 가치에 큰 영향을 줄 수 있는 핵심 뉴스
-`;
 
+summary는 정확히 3개 항목으로 작성한다.
+
+reason은 2~3문장 정도로 간결하게 작성한다.
+`;
 
 
     /*
     ==========================================
-    Gemini API 호출
+    Gemini 호출
     ==========================================
     */
 
     const geminiUrl =
-  "https://generativelanguage.googleapis.com/v1beta/models/" +
-  "gemini-3.5-flash-lite:generateContent";
-    
+      "https://generativelanguage.googleapis.com/v1beta/models/" +
+      "gemini-3.5-flash-lite:generateContent";
+
 
     const geminiResponse =
       await fetch(
@@ -133,9 +142,7 @@ ${safeDescription}
           method: "POST",
 
           headers: {
-            "Content-Type":
-              "application/json",
-
+            "Content-Type": "application/json",
             "x-goog-api-key":
               process.env.GEMINI_API_KEY
           },
@@ -153,11 +160,10 @@ ${safeDescription}
             ],
 
             generationConfig: {
-
               temperature: 0.2,
-
-              maxOutputTokens: 600
-
+              maxOutputTokens: 700,
+              responseMimeType:
+                "application/json"
             }
 
           })
@@ -165,23 +171,9 @@ ${safeDescription}
       );
 
 
-
-    /*
-    ==========================================
-    Gemini 응답 읽기
-    ==========================================
-    */
-
     const data =
       await geminiResponse.json();
 
-
-
-    /*
-    ==========================================
-    Gemini 오류 처리
-    ==========================================
-    */
 
     if (!geminiResponse.ok) {
 
@@ -191,72 +183,165 @@ ${safeDescription}
         geminiResponse.status
       );
 
-
       return res.status(500).json({
         error:
           "Gemini AI 분석 요청에 실패했습니다."
       });
-
     }
-
 
 
     /*
     ==========================================
-    Gemini가 생성한 텍스트 꺼내기
+    Gemini 텍스트 추출
     ==========================================
     */
 
-    const analysis =
+    const rawText =
       data?.candidates?.[0]
         ?.content
         ?.parts
-        ?.map(
-          function(part) {
-
-            return part.text || "";
-
-          }
-        )
+        ?.map(function(part) {
+          return part.text || "";
+        })
         .join("")
         .trim();
 
 
-
-    /*
-    ==========================================
-    결과가 비어 있는 경우
-    ==========================================
-    */
-
-    if (!analysis) {
+    if (!rawText) {
 
       console.error(
         "Gemini returned no text."
       );
 
-
       return res.status(500).json({
         error:
           "AI 분석 결과가 비어 있습니다."
       });
-
     }
-
 
 
     /*
     ==========================================
-    브라우저에 분석 결과 전달
+    JSON 변환
     ==========================================
     */
 
+    let analysis;
+
+    try {
+
+      let cleanText =
+        rawText
+          .replace(/^```json\s*/i, "")
+          .replace(/^```\s*/i, "")
+          .replace(/```$/i, "")
+          .trim();
+
+      analysis =
+        JSON.parse(cleanText);
+
+    } catch (parseError) {
+
+      console.error(
+        "Gemini JSON parse error"
+      );
+
+      return res.status(500).json({
+        error:
+          "AI 분석 결과를 정리하지 못했습니다."
+      });
+    }
+
+
+    /*
+    ==========================================
+    결과 검증
+    ==========================================
+    */
+
+    const validImpacts = [
+      "긍정",
+      "부정",
+      "중립",
+      "불확실"
+    ];
+
+
+    if (
+      !Array.isArray(analysis.summary) ||
+      analysis.summary.length !== 3
+    ) {
+
+      return res.status(500).json({
+        error:
+          "AI 요약 형식이 올바르지 않습니다."
+      });
+    }
+
+
+    if (
+      !validImpacts.includes(
+        analysis.impact
+      )
+    ) {
+
+      analysis.impact =
+        "불확실";
+    }
+
+
+    let importance =
+      Number(
+        analysis.importance
+      );
+
+
+    if (
+      !Number.isInteger(importance) ||
+      importance < 1 ||
+      importance > 5
+    ) {
+
+      importance = 1;
+    }
+
+
+    /*
+    ==========================================
+    안전한 최종 결과
+    ==========================================
+    */
+
+    const safeAnalysis = {
+
+      summary:
+        analysis.summary
+          .slice(0, 3)
+          .map(function(item) {
+            return String(item)
+              .slice(0, 500);
+          }),
+
+      impact:
+        analysis.impact,
+
+      importance:
+        importance,
+
+      reason:
+        String(
+          analysis.reason || ""
+        ).slice(0, 1500)
+
+    };
+
+
     return res.status(200).json({
+      analysis:
+        safeAnalysis,
 
-      analysis: analysis,
-
-      provider: "gemini"
-
+      provider:
+        "gemini"
     });
 
 
@@ -267,12 +352,9 @@ ${safeDescription}
       error.message
     );
 
-
     return res.status(500).json({
-
       error:
         "AI 분석 서버 오류"
-
     });
 
   }

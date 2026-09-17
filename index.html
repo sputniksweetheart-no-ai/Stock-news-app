@@ -2,356 +2,464 @@
 <html lang="ko">
 
 <head>
-  <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+<meta charset="UTF-8">
 
-  <title>My Stock News</title>
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
 
-  <style>
+<title>My Stock News</title>
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      color: #222;
-    }
+<style>
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-      padding: 24px;
-    }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  color: #222;
+}
 
-    h1 {
-      margin-bottom: 5px;
-    }
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 24px;
+}
 
-    .subtitle {
-      color: #777;
-      margin-bottom: 25px;
-    }
+h1 {
+  margin-bottom: 5px;
+}
 
-    .section {
-      background: white;
-      padding: 20px;
-      border-radius: 15px;
-      margin-bottom: 20px;
-    }
+.subtitle {
+  color: #777;
+  margin-bottom: 25px;
+}
 
-    .stocks {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+.section {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+}
 
-    .stock {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      background: #eef1f5;
-      padding: 9px 12px;
-      border-radius: 999px;
-    }
+.stocks {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
 
-    .stock.active {
-      background: #222;
-      color: white;
-    }
+.stock {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #eef1f5;
+  padding: 9px 12px;
+  border-radius: 999px;
+}
 
-    .stock-name {
-      cursor: pointer;
-      font-weight: 600;
-    }
+.stock.active {
+  background: #222;
+  color: white;
+}
 
-    .stock-button {
-      border: none;
-      background: transparent;
-      color: inherit;
-      cursor: pointer;
-      padding: 0;
-      font-size: 15px;
-    }
+.stock-name {
+  cursor: pointer;
+  font-weight: 600;
+}
 
-    .add-stock {
-      border: none;
-      background: #2563eb;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 999px;
-      cursor: pointer;
-    }
+.stock-button {
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  font-size: 15px;
+}
 
-    .all-stock {
-      background: #222;
-      color: white;
-      padding: 9px 13px;
-      border-radius: 999px;
-      cursor: pointer;
-    }
+.add-stock {
+  border: none;
+  background: #2563eb;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 999px;
+  cursor: pointer;
+}
 
-    .keyword-info {
-      color: #777;
-      font-size: 13px;
-      margin-top: 15px;
-      line-height: 1.5;
-    }
+.all-stock {
+  background: #222;
+  color: white;
+  padding: 9px 13px;
+  border-radius: 999px;
+  cursor: pointer;
+}
 
-    .toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 15px;
-    }
+.keyword-info {
+  color: #777;
+  font-size: 13px;
+  margin-top: 15px;
+  line-height: 1.5;
+}
 
-    .refresh-button {
-      border: none;
-      background: #222;
-      color: white;
-      padding: 9px 14px;
-      border-radius: 9px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
 
-    .news-card {
-      background: white;
-      padding: 18px;
-      border-radius: 14px;
-      margin-bottom: 13px;
-    }
+.refresh-button {
+  border: none;
+  background: #222;
+  color: white;
+  padding: 9px 14px;
+  border-radius: 9px;
+  cursor: pointer;
+}
 
-    .news-card.is-new {
-      box-shadow:
-        0 0 0 1px #ffd6d6,
-        0 5px 18px rgba(0, 0, 0, 0.04);
-    }
+.news-card {
+  background: white;
+  padding: 18px;
+  border-radius: 14px;
+  margin-bottom: 13px;
+}
 
-    .news-top {
-      display: flex;
-      gap: 7px;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+.news-card.is-new {
+  box-shadow:
+    0 0 0 1px #ffd6d6,
+    0 5px 18px rgba(0,0,0,0.04);
+}
 
-    .stock-badge {
-      background: #e8efff;
-      color: #2458b8;
-      padding: 4px 8px;
-      border-radius: 7px;
-      font-size: 12px;
-      font-weight: bold;
-    }
+.news-top {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
 
-    .source-badge {
-      background: #e9f8ee;
-      color: #16843c;
-      padding: 4px 8px;
-      border-radius: 7px;
-      font-size: 12px;
-      font-weight: bold;
-    }
+.stock-badge,
+.source-badge,
+.keyword-badge,
+.new-badge {
+  padding: 4px 8px;
+  border-radius: 7px;
+  font-size: 12px;
+}
 
-    .source-badge.global {
-      background: #eef2ff;
-      color: #4338ca;
-    }
+.stock-badge {
+  background: #e8efff;
+  color: #2458b8;
+  font-weight: bold;
+}
 
-    .keyword-badge {
-      background: #fff4df;
-      color: #a15c00;
-      padding: 4px 8px;
-      border-radius: 7px;
-      font-size: 12px;
-    }
+.source-badge {
+  background: #e9f8ee;
+  color: #16843c;
+  font-weight: bold;
+}
 
-    .new-badge {
-      background: #e53935;
-      color: white;
-      padding: 4px 8px;
-      border-radius: 7px;
-      font-size: 11px;
-      font-weight: bold;
-    }
+.source-badge.global {
+  background: #eef2ff;
+  color: #4338ca;
+}
 
-    .news-title {
-      font-size: 18px;
-      font-weight: bold;
-      line-height: 1.4;
-      margin-bottom: 8px;
-    }
+.keyword-badge {
+  background: #fff4df;
+  color: #a15c00;
+}
 
-    .news-title a {
-      color: #111;
-      text-decoration: none;
-    }
+.new-badge {
+  background: #e53935;
+  color: white;
+  font-weight: bold;
+}
 
-    .news-title a:hover {
-      text-decoration: underline;
-    }
+.news-title {
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
 
-    .news-description {
-      color: #555;
-      line-height: 1.5;
-      margin-bottom: 10px;
-    }
+.news-title a {
+  color: #111;
+  text-decoration: none;
+}
 
-    .news-meta {
-      font-size: 13px;
-      color: #999;
-    }
+.news-title a:hover {
+  text-decoration: underline;
+}
+
+.news-description {
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.news-meta {
+  font-size: 13px;
+  color: #999;
+}
 
 
-    /*
-      AI 버튼
-    */
+/*
+==========================================
+AI 버튼
+==========================================
+*/
 
-    .ai-button {
-      margin-top: 14px;
-      border: none;
-      background: #111827;
-      color: white;
-      padding: 10px 14px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 14px;
-    }
+.ai-button {
+  margin-top: 14px;
+  border: none;
+  background: #111827;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
 
-    .ai-button:hover {
-      opacity: 0.9;
-    }
-
-    .ai-button:disabled {
-      opacity: 0.6;
-      cursor: default;
-    }
+.ai-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
 
 
-    /*
-      AI 결과
-    */
+/*
+==========================================
+AI 카드
+==========================================
+*/
 
-    .ai-result {
-      display: none;
-      margin-top: 14px;
-      padding: 16px;
-      background: #f8f7ff;
-      border: 1px solid #e5e1ff;
-      border-radius: 12px;
-      line-height: 1.7;
-      white-space: pre-wrap;
-    }
+.ai-result {
+  display: none;
+  margin-top: 14px;
+  padding: 18px;
+  background: #f8f7ff;
+  border: 1px solid #e5e1ff;
+  border-radius: 14px;
+}
 
-    .ai-result.show {
-      display: block;
-    }
+.ai-result.show {
+  display: block;
+}
 
-    .ai-result-title {
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
+.ai-result-title {
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: 18px;
+}
 
-    .ai-error {
-      color: #b42318;
-    }
+.ai-section {
+  margin-top: 17px;
+}
+
+.ai-label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.ai-summary {
+  margin: 0;
+  padding-left: 21px;
+  line-height: 1.7;
+}
+
+.ai-summary li {
+  margin-bottom: 5px;
+}
 
 
-    /*
-      일반 메시지
-    */
+/*
+영향 + 중요도
+*/
 
-    .message {
-      background: white;
-      padding: 25px;
-      border-radius: 14px;
-      color: #666;
-    }
+.ai-status-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.ai-status-box {
+  background: white;
+  padding: 14px;
+  border-radius: 11px;
+  border: 1px solid #ececec;
+}
+
+.ai-status-value {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 7px;
+}
 
 
-    /*
-      키워드 설정창
-    */
+/*
+신호등
+*/
 
-    .modal-background {
-      display: none;
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.45);
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      box-sizing: border-box;
-      z-index: 1000;
-    }
+.impact-positive {
+  color: #16843c;
+}
 
-    .modal-background.show {
-      display: flex;
-    }
+.impact-negative {
+  color: #d92d20;
+}
 
-    .modal {
-      background: white;
-      width: 100%;
-      max-width: 500px;
-      padding: 24px;
-      border-radius: 18px;
-      box-sizing: border-box;
-    }
+.impact-uncertain {
+  color: #c58a00;
+}
 
-    .modal h2 {
-      margin-top: 0;
-    }
+.impact-neutral {
+  color: #667085;
+}
 
-    .modal-description {
-      color: #666;
-      font-size: 14px;
-      line-height: 1.5;
-    }
 
-    .keyword-input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 13px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      font-size: 16px;
-      margin-top: 10px;
-    }
+/*
+별
+*/
 
-    .modal-buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 20px;
-    }
+.importance-stars {
+  font-size: 20px;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
 
-    .cancel-button {
-      border: none;
-      background: #eee;
-      padding: 10px 16px;
-      border-radius: 9px;
-      cursor: pointer;
-    }
 
-    .save-button {
-      border: none;
-      background: #2563eb;
-      color: white;
-      padding: 10px 16px;
-      border-radius: 9px;
-      cursor: pointer;
-    }
+/*
+이유
+*/
 
-  </style>
+.ai-reason {
+  line-height: 1.7;
+  color: #444;
+}
+
+.ai-error {
+  color: #b42318;
+}
+
+
+/*
+==========================================
+기타
+==========================================
+*/
+
+.message {
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  color: #666;
+}
+
+
+/*
+키워드 모달
+*/
+
+.modal-background {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.modal-background.show {
+  display: flex;
+}
+
+.modal {
+  background: white;
+  width: 100%;
+  max-width: 500px;
+  padding: 24px;
+  border-radius: 18px;
+  box-sizing: border-box;
+}
+
+.modal h2 {
+  margin-top: 0;
+}
+
+.modal-description {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.keyword-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cancel-button,
+.save-button {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  background: #eee;
+}
+
+.save-button {
+  background: #2563eb;
+  color: white;
+}
+
+
+/*
+아이패드 / 모바일
+*/
+
+@media (max-width: 600px) {
+
+  .container {
+    padding: 15px;
+  }
+
+  .ai-status-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .importance-stars {
+    font-size: 17px;
+    letter-spacing: 0;
+  }
+
+}
+
+</style>
 
 </head>
 
@@ -360,125 +468,118 @@
 
 <div class="container">
 
-  <h1>
-    📈 My Stock News
-  </h1>
+<h1>📈 My Stock News</h1>
 
-  <div class="subtitle">
-    내 관심 종목과 관련 키워드의 뉴스를 한 번에
-  </div>
+<div class="subtitle">
+내 관심 종목과 관련 키워드의 뉴스를 한 번에
+</div>
 
 
-  <div class="section">
+<div class="section">
 
-    <h2>
-      내 종목
-    </h2>
+<h2>내 종목</h2>
 
-    <div
-      class="stocks"
-      id="stockList"
-    >
+<div
+  class="stocks"
+  id="stockList"
+>
 
-      <div
-        class="all-stock"
-        id="allStockButton"
-      >
-        전체
-      </div>
+<div
+  class="all-stock"
+  id="allStockButton"
+>
+전체
+</div>
 
-      <button
-        class="add-stock"
-        id="addStockButton"
-      >
-        + 종목 추가
-      </button>
+<button
+  class="add-stock"
+  id="addStockButton"
+>
++ 종목 추가
+</button>
 
-    </div>
+</div>
 
+<div class="keyword-info">
+⚙️ 종목별 관련 키워드 설정 ·
+처음 보는 뉴스에는 NEW가 표시됩니다.
+</div>
 
-    <div class="keyword-info">
-      ⚙️ 종목별 관련 키워드 설정 ·
-      처음 보는 뉴스에는 NEW가 표시됩니다.
-    </div>
-
-  </div>
+</div>
 
 
-  <div class="toolbar">
+<div class="toolbar">
 
-    <h2 id="newsHeading">
-      내 종목 최신 뉴스
-    </h2>
+<h2 id="newsHeading">
+내 종목 최신 뉴스
+</h2>
 
-    <button
-      class="refresh-button"
-      id="refreshButton"
-    >
-      ↻ 새로고침
-    </button>
+<button
+  class="refresh-button"
+  id="refreshButton"
+>
+↻ 새로고침
+</button>
 
-  </div>
+</div>
 
 
-  <div id="newsList">
+<div id="newsList">
 
-    <div class="message">
-      뉴스를 불러오는 중...
-    </div>
+<div class="message">
+뉴스를 불러오는 중...
+</div>
 
-  </div>
+</div>
 
 </div>
 
 
 
-<!-- 키워드 설정창 -->
+<!-- 키워드 설정 -->
 
 <div
   class="modal-background"
   id="keywordModal"
 >
 
-  <div class="modal">
+<div class="modal">
 
-    <h2 id="modalTitle">
-      관련 키워드 설정
-    </h2>
+<h2 id="modalTitle">
+관련 키워드 설정
+</h2>
 
-    <div class="modal-description">
-      쉼표(,)로 구분해서 입력하세요.<br><br>
+<div class="modal-description">
+쉼표(,)로 구분해서 입력하세요.<br><br>
+예: HBM, NVIDIA, 파운드리
+</div>
 
-      예:<br>
-      HBM, NVIDIA, 파운드리
-    </div>
+<input
+  type="text"
+  class="keyword-input"
+  id="keywordInput"
+  placeholder="예: HBM, NVIDIA"
+>
 
-    <input
-      type="text"
-      class="keyword-input"
-      id="keywordInput"
-      placeholder="예: HBM, NVIDIA"
-    >
+<div class="modal-buttons">
 
-    <div class="modal-buttons">
+<button
+  class="cancel-button"
+  id="cancelKeywordButton"
+>
+취소
+</button>
 
-      <button
-        class="cancel-button"
-        id="cancelKeywordButton"
-      >
-        취소
-      </button>
+<button
+  class="save-button"
+  id="saveKeywordButton"
+>
+저장
+</button>
 
-      <button
-        class="save-button"
-        id="saveKeywordButton"
-      >
-        저장
-      </button>
+</div>
 
-    </div>
-
-  </div>
+</div>
 
 </div>
 
@@ -487,9 +588,9 @@
 <script>
 
 /*
-==================================================
+==========================================
 화면 요소
-==================================================
+==========================================
 */
 
 const addButton =
@@ -526,11 +627,10 @@ const saveKeywordButton =
   document.getElementById("saveKeywordButton");
 
 
-
 /*
-==================================================
+==========================================
 저장 데이터
-==================================================
+==========================================
 */
 
 let stocks =
@@ -555,19 +655,30 @@ let seenArticles =
   ) || [];
 
 
-let selectedStock =
-  "ALL";
+/*
+AI 분석 캐시
+
+기사 고유값을 이용해서
+한 번 분석한 결과를 저장한다.
+*/
+
+let aiAnalysisCache =
+  JSON.parse(
+    localStorage.getItem(
+      "aiAnalysisCache"
+    )
+  ) || {};
 
 
-let editingStock =
-  null;
+let selectedStock = "ALL";
 
+let editingStock = null;
 
 
 /*
-==================================================
-저장 함수
-==================================================
+==========================================
+저장
+==========================================
 */
 
 function saveStocks() {
@@ -592,15 +703,10 @@ function saveKeywords() {
 
 function saveSeenArticles() {
 
-  if (
-    seenArticles.length > 1000
-  ) {
-
+  if (seenArticles.length > 1000) {
     seenArticles =
       seenArticles.slice(-1000);
-
   }
-
 
   localStorage.setItem(
     "seenArticles",
@@ -610,59 +716,86 @@ function saveSeenArticles() {
 }
 
 
+function saveAIAnalysisCache() {
+
+  /*
+  최대 200개 분석만 보관
+  */
+
+  const keys =
+    Object.keys(
+      aiAnalysisCache
+    );
+
+
+  if (keys.length > 200) {
+
+    const keysToDelete =
+      keys.slice(
+        0,
+        keys.length - 200
+      );
+
+
+    keysToDelete.forEach(
+      function(key) {
+
+        delete aiAnalysisCache[key];
+
+      }
+    );
+
+  }
+
+
+  localStorage.setItem(
+    "aiAnalysisCache",
+    JSON.stringify(
+      aiAnalysisCache
+    )
+  );
+
+}
+
 
 /*
-==================================================
-종목 표시
-==================================================
+==========================================
+종목
+==========================================
 */
 
 function renderStocks() {
 
   document
     .querySelectorAll(".stock")
-    .forEach(
-      function(element) {
-
-        element.remove();
-
-      }
-    );
+    .forEach(function(element) {
+      element.remove();
+    });
 
 
   stocks.forEach(
     function(stockName, index) {
 
       const stock =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
-
-      stock.className =
-        "stock";
+      stock.className = "stock";
 
 
       if (
         selectedStock === stockName
       ) {
-
         stock.classList.add(
           "active"
         );
-
       }
 
 
       const name =
-        document.createElement(
-          "span"
-        );
-
+        document.createElement("span");
 
       name.className =
         "stock-name";
-
 
       name.textContent =
         stockName;
@@ -675,9 +808,7 @@ function renderStocks() {
           selectedStock =
             stockName;
 
-
           renderStocks();
-
 
           loadSingleStock(
             stockName
@@ -687,31 +818,22 @@ function renderStocks() {
       );
 
 
-
       const settingsButton =
         document.createElement(
           "button"
         );
 
-
       settingsButton.className =
         "stock-button";
 
-
       settingsButton.textContent =
         "⚙️";
-
-
-      settingsButton.title =
-        "관련 키워드 설정";
-
 
       settingsButton.addEventListener(
         "click",
         function(event) {
 
           event.stopPropagation();
-
 
           openKeywordModal(
             stockName
@@ -721,16 +843,13 @@ function renderStocks() {
       );
 
 
-
       const deleteButton =
         document.createElement(
           "button"
         );
 
-
       deleteButton.className =
         "stock-button";
-
 
       deleteButton.textContent =
         "×";
@@ -742,17 +861,14 @@ function renderStocks() {
 
           event.stopPropagation();
 
-
           stocks.splice(
             index,
             1
           );
 
-
           delete stockKeywords[
             stockName
           ];
-
 
           saveStocks();
 
@@ -763,12 +879,9 @@ function renderStocks() {
             selectedStock ===
             stockName
           ) {
-
             selectedStock =
               "ALL";
-
           }
-
 
           renderStocks();
 
@@ -778,20 +891,15 @@ function renderStocks() {
       );
 
 
-      stock.appendChild(
-        name
-      );
-
+      stock.appendChild(name);
 
       stock.appendChild(
         settingsButton
       );
 
-
       stock.appendChild(
         deleteButton
       );
-
 
       stockList.insertBefore(
         stock,
@@ -804,11 +912,10 @@ function renderStocks() {
 }
 
 
-
 /*
-==================================================
+==========================================
 종목 추가
-==================================================
+==========================================
 */
 
 addButton.addEventListener(
@@ -820,25 +927,19 @@ addButton.addEventListener(
         "추가할 종목 이름을 입력하세요."
       );
 
-
     if (!stockName) {
       return;
     }
 
-
     const cleanName =
       stockName.trim();
-
 
     if (!cleanName) {
       return;
     }
 
-
     if (
-      stocks.includes(
-        cleanName
-      )
+      stocks.includes(cleanName)
     ) {
 
       alert(
@@ -846,14 +947,10 @@ addButton.addEventListener(
       );
 
       return;
-
     }
 
 
-    stocks.push(
-      cleanName
-    );
-
+    stocks.push(cleanName);
 
     saveStocks();
 
@@ -865,11 +962,10 @@ addButton.addEventListener(
 );
 
 
-
 /*
-==================================================
-키워드 설정
-==================================================
+==========================================
+키워드
+==========================================
 */
 
 function openKeywordModal(
@@ -879,42 +975,31 @@ function openKeywordModal(
   editingStock =
     stockName;
 
-
   modalTitle.textContent =
     stockName +
     " 관련 키워드";
-
 
   const keywords =
     stockKeywords[
       stockName
     ] || [];
 
-
   keywordInput.value =
     keywords.join(", ");
-
 
   keywordModal.classList.add(
     "show"
   );
-
 
   keywordInput.focus();
 
 }
 
 
-
 cancelKeywordButton.addEventListener(
   "click",
-  function() {
-
-    closeKeywordModal();
-
-  }
+  closeKeywordModal
 );
-
 
 
 saveKeywordButton.addEventListener(
@@ -925,42 +1010,28 @@ saveKeywordButton.addEventListener(
       return;
     }
 
-
     const keywords =
       keywordInput.value
         .split(",")
-        .map(
-          function(keyword) {
-
-            return keyword.trim();
-
-          }
-        )
-        .filter(
-          function(keyword) {
-
-            return keyword.length > 0;
-
-          }
-        );
-
-
-    const uniqueKeywords =
-      [...new Set(keywords)];
+        .map(function(keyword) {
+          return keyword.trim();
+        })
+        .filter(function(keyword) {
+          return keyword.length > 0;
+        });
 
 
     stockKeywords[
       editingStock
     ] =
-      uniqueKeywords;
-
-
-    saveKeywords();
+      [...new Set(keywords)];
 
 
     const stockBeingEdited =
       editingStock;
 
+
+    saveKeywords();
 
     closeKeywordModal();
 
@@ -984,19 +1055,15 @@ saveKeywordButton.addEventListener(
 );
 
 
-
 function closeKeywordModal() {
 
-  keywordModal
-    .classList
-    .remove("show");
+  keywordModal.classList.remove(
+    "show"
+  );
 
-
-  editingStock =
-    null;
+  editingStock = null;
 
 }
-
 
 
 keywordModal.addEventListener(
@@ -1016,20 +1083,17 @@ keywordModal.addEventListener(
 );
 
 
-
 /*
-==================================================
+==========================================
 전체 / 새로고침
-==================================================
+==========================================
 */
 
 allStockButton.addEventListener(
   "click",
   function() {
 
-    selectedStock =
-      "ALL";
-
+    selectedStock = "ALL";
 
     renderStocks();
 
@@ -1037,7 +1101,6 @@ allStockButton.addEventListener(
 
   }
 );
-
 
 
 refreshButton.addEventListener(
@@ -1062,11 +1125,10 @@ refreshButton.addEventListener(
 );
 
 
-
 /*
-==================================================
+==========================================
 뉴스 API
-==================================================
+==========================================
 */
 
 async function fetchQuery(
@@ -1078,19 +1140,14 @@ async function fetchQuery(
   const response =
     await fetch(
       "/api/news?q=" +
-      encodeURIComponent(
-        query
-      )
+      encodeURIComponent(query)
     );
 
 
   if (!response.ok) {
-
     throw new Error(
-      query +
-      " 뉴스 호출 실패"
+      "뉴스 호출 실패"
     );
-
   }
 
 
@@ -1100,26 +1157,18 @@ async function fetchQuery(
 
   return (
     data.items || []
-  ).map(
-    function(item) {
+  ).map(function(item) {
 
-      return {
+    return {
+      ...item,
+      stock: stockName,
+      matchedKeyword:
+        matchedKeyword
+    };
 
-        ...item,
-
-        stock:
-          stockName,
-
-        matchedKeyword:
-          matchedKeyword
-
-      };
-
-    }
-  );
+  });
 
 }
-
 
 
 async function fetchStockNews(
@@ -1131,17 +1180,10 @@ async function fetchStockNews(
       stockKeywords[
         stockName
       ] || []
-    ).slice(
-      0,
-      2
-    );
+    ).slice(0, 2);
 
 
-  const requests =
-    [];
-
-
-  requests.push(
+  const requests = [
 
     fetchQuery(
       stockName,
@@ -1149,7 +1191,7 @@ async function fetchStockNews(
       null
     )
 
-  );
+  ];
 
 
   keywords.forEach(
@@ -1182,69 +1224,53 @@ async function fetchStockNews(
 }
 
 
-
 /*
-==================================================
+==========================================
 전체 뉴스
-==================================================
+==========================================
 */
 
 async function loadAllNews() {
 
-  selectedStock =
-    "ALL";
-
+  selectedStock = "ALL";
 
   renderStocks();
 
-
   newsHeading.textContent =
     "내 종목 최신 뉴스";
-
 
   newsList.innerHTML =
     '<div class="message">뉴스를 모으는 중...</div>';
 
 
-  if (
-    stocks.length === 0
-  ) {
+  if (stocks.length === 0) {
 
     newsList.innerHTML =
       '<div class="message">등록된 종목이 없습니다.</div>';
 
     return;
-
   }
 
 
   try {
 
-    const requests =
-      stocks.map(
-        function(stock) {
-
-          return fetchStockNews(
-            stock
-          );
-
-        }
-      );
-
-
     const results =
       await Promise.all(
-        requests
+
+        stocks.map(
+          function(stock) {
+            return fetchStockNews(
+              stock
+            );
+          }
+        )
+
       );
 
 
     let allNews =
-      results.flat();
-
-
-    allNews =
       removeDuplicates(
-        allNews
+        results.flat()
       );
 
 
@@ -1260,10 +1286,7 @@ async function loadAllNews() {
 
   } catch (error) {
 
-    console.error(
-      error
-    );
-
+    console.error(error);
 
     newsList.innerHTML =
       '<div class="message">뉴스를 불러오는 중 오류가 발생했습니다.</div>';
@@ -1273,11 +1296,10 @@ async function loadAllNews() {
 }
 
 
-
 /*
-==================================================
+==========================================
 종목 하나
-==================================================
+==========================================
 */
 
 async function loadSingleStock(
@@ -1287,7 +1309,6 @@ async function loadSingleStock(
   newsHeading.textContent =
     stockName +
     " 최신 뉴스";
-
 
   newsList.innerHTML =
     '<div class="message">뉴스를 불러오는 중...</div>';
@@ -1300,11 +1321,9 @@ async function loadSingleStock(
         stockName
       );
 
-
     items.sort(
       sortByDate
     );
-
 
     renderNews(
       items
@@ -1313,10 +1332,7 @@ async function loadSingleStock(
 
   } catch (error) {
 
-    console.error(
-      error
-    );
-
+    console.error(error);
 
     newsList.innerHTML =
       '<div class="message">뉴스를 불러오지 못했습니다.</div>';
@@ -1326,55 +1342,39 @@ async function loadSingleStock(
 }
 
 
-
 /*
-==================================================
-날짜 정렬
-==================================================
+==========================================
+날짜
+==========================================
 */
 
-function sortByDate(
-  a,
-  b
-) {
-
-  const dateA =
-    new Date(
-      a.pubDate
-    ).getTime();
-
-
-  const dateB =
-    new Date(
-      b.pubDate
-    ).getTime();
-
+function sortByDate(a, b) {
 
   return (
-    (dateB || 0) -
-    (dateA || 0)
+    new Date(
+      b.pubDate
+    ).getTime() || 0
+  ) -
+  (
+    new Date(
+      a.pubDate
+    ).getTime() || 0
   );
 
 }
 
 
-
 /*
-==================================================
-기사 고유값 / 읽음
-==================================================
+==========================================
+기사 고유값
+==========================================
 */
 
-function getArticleKey(
-  item
-) {
+function getArticleKey(item) {
 
   if (item.link) {
-
     return item.link;
-
   }
-
 
   return (
     "title:" +
@@ -1388,33 +1388,28 @@ function getArticleKey(
 }
 
 
+/*
+==========================================
+NEW
+==========================================
+*/
 
-function isArticleSeen(
-  articleKey
-) {
+function isArticleSeen(key) {
 
   return seenArticles.includes(
-    articleKey
+    key
   );
 
 }
 
 
-
-function markArticleAsSeen(
-  articleKey
-) {
+function markArticleAsSeen(key) {
 
   if (
-    !seenArticles.includes(
-      articleKey
-    )
+    !seenArticles.includes(key)
   ) {
 
-    seenArticles.push(
-      articleKey
-    );
-
+    seenArticles.push(key);
 
     saveSeenArticles();
 
@@ -1423,45 +1418,28 @@ function markArticleAsSeen(
 }
 
 
-
 /*
-==================================================
+==========================================
 중복 제거
-==================================================
+==========================================
 */
 
-function removeDuplicates(
-  items
-) {
+function removeDuplicates(items) {
 
   const seen =
     new Set();
-
 
   return items.filter(
     function(item) {
 
       const key =
-        getArticleKey(
-          item
-        );
+        getArticleKey(item);
 
-
-      if (
-        seen.has(
-          key
-        )
-      ) {
-
+      if (seen.has(key)) {
         return false;
-
       }
 
-
-      seen.add(
-        key
-      );
-
+      seen.add(key);
 
       return true;
 
@@ -1471,11 +1449,10 @@ function removeDuplicates(
 }
 
 
-
 /*
-==================================================
-★ 실제 AI 분석 요청
-==================================================
+==========================================
+AI 요청
+==========================================
 */
 
 async function requestAIAnalysis(
@@ -1486,8 +1463,8 @@ async function requestAIAnalysis(
     await fetch(
       "/api/analyze",
       {
-        method:
-          "POST",
+
+        method: "POST",
 
         headers: {
           "Content-Type":
@@ -1511,13 +1488,10 @@ async function requestAIAnalysis(
               )
 
           })
+
       }
     );
 
-
-  /*
-    JSON 응답 읽기
-  */
 
   const data =
     await response.json();
@@ -1533,10 +1507,12 @@ async function requestAIAnalysis(
   }
 
 
-  if (!data.analysis) {
+  if (
+    !data.analysis
+  ) {
 
     throw new Error(
-      "AI 분석 결과가 없습니다."
+      "AI 분석 결과 없음"
     );
 
   }
@@ -1547,30 +1523,395 @@ async function requestAIAnalysis(
 }
 
 
-
 /*
-==================================================
-뉴스 출력
-==================================================
+==========================================
+영향 표시
+==========================================
 */
 
-function renderNews(
-  items
+function getImpactDisplay(
+  impact
 ) {
 
-  newsList.innerHTML =
-    "";
+  if (impact === "긍정") {
+
+    return {
+      icon: "🟢",
+      className:
+        "impact-positive"
+    };
+
+  }
+
+
+  if (impact === "부정") {
+
+    return {
+      icon: "🔴",
+      className:
+        "impact-negative"
+    };
+
+  }
+
+
+  if (impact === "불확실") {
+
+    return {
+      icon: "🟡",
+      className:
+        "impact-uncertain"
+    };
+
+  }
+
+
+  return {
+    icon: "⚪",
+    className:
+      "impact-neutral"
+  };
+
+}
+
+
+/*
+==========================================
+중요도 별
+==========================================
+*/
+
+function getStars(
+  importance
+) {
+
+  let number =
+    Number(importance);
 
 
   if (
-    items.length === 0
+    !Number.isInteger(number) ||
+    number < 1 ||
+    number > 5
   ) {
+
+    number = 1;
+
+  }
+
+
+  return (
+    "★".repeat(number) +
+    "☆".repeat(5 - number)
+  );
+
+}
+
+
+/*
+==========================================
+AI 카드 표시
+==========================================
+*/
+
+function displayAIAnalysis(
+  container,
+  analysis
+) {
+
+  container.innerHTML = "";
+
+  container.className =
+    "ai-result show";
+
+
+  /*
+  제목
+  */
+
+  const title =
+    document.createElement(
+      "div"
+    );
+
+  title.className =
+    "ai-result-title";
+
+  title.textContent =
+    "👻 AI 뉴스 분석";
+
+  container.appendChild(
+    title
+  );
+
+
+  /*
+  3줄 요약
+  */
+
+  const summarySection =
+    document.createElement(
+      "div"
+    );
+
+  summarySection.className =
+    "ai-section";
+
+
+  const summaryLabel =
+    document.createElement(
+      "div"
+    );
+
+  summaryLabel.className =
+    "ai-label";
+
+  summaryLabel.textContent =
+    "📝 3줄 요약";
+
+
+  const summaryList =
+    document.createElement(
+      "ul"
+    );
+
+  summaryList.className =
+    "ai-summary";
+
+
+  analysis.summary.forEach(
+    function(text) {
+
+      const li =
+        document.createElement(
+          "li"
+        );
+
+      li.textContent =
+        text;
+
+      summaryList.appendChild(
+        li
+      );
+
+    }
+  );
+
+
+  summarySection.appendChild(
+    summaryLabel
+  );
+
+  summarySection.appendChild(
+    summaryList
+  );
+
+  container.appendChild(
+    summarySection
+  );
+
+
+  /*
+  영향 + 중요도
+  */
+
+  const statusRow =
+    document.createElement(
+      "div"
+    );
+
+  statusRow.className =
+    "ai-status-row";
+
+
+  /*
+  영향
+  */
+
+  const impactBox =
+    document.createElement(
+      "div"
+    );
+
+  impactBox.className =
+    "ai-status-box";
+
+
+  const impactLabel =
+    document.createElement(
+      "div"
+    );
+
+  impactLabel.className =
+    "ai-label";
+
+  impactLabel.textContent =
+    "📊 종목 영향";
+
+
+  const impactValue =
+    document.createElement(
+      "div"
+    );
+
+  const impactDisplay =
+    getImpactDisplay(
+      analysis.impact
+    );
+
+
+  impactValue.className =
+    "ai-status-value " +
+    impactDisplay.className;
+
+
+  impactValue.textContent =
+    impactDisplay.icon +
+    " " +
+    analysis.impact;
+
+
+  impactBox.appendChild(
+    impactLabel
+  );
+
+  impactBox.appendChild(
+    impactValue
+  );
+
+
+  /*
+  중요도
+  */
+
+  const importanceBox =
+    document.createElement(
+      "div"
+    );
+
+  importanceBox.className =
+    "ai-status-box";
+
+
+  const importanceLabel =
+    document.createElement(
+      "div"
+    );
+
+  importanceLabel.className =
+    "ai-label";
+
+  importanceLabel.textContent =
+    "🔥 중요도";
+
+
+  const importanceValue =
+    document.createElement(
+      "div"
+    );
+
+  importanceValue.className =
+    "importance-stars";
+
+
+  importanceValue.textContent =
+    getStars(
+      analysis.importance
+    );
+
+
+  importanceBox.appendChild(
+    importanceLabel
+  );
+
+  importanceBox.appendChild(
+    importanceValue
+  );
+
+
+  statusRow.appendChild(
+    impactBox
+  );
+
+  statusRow.appendChild(
+    importanceBox
+  );
+
+
+  container.appendChild(
+    statusRow
+  );
+
+
+  /*
+  이유
+  */
+
+  const reasonSection =
+    document.createElement(
+      "div"
+    );
+
+  reasonSection.className =
+    "ai-section";
+
+
+  const reasonLabel =
+    document.createElement(
+      "div"
+    );
+
+  reasonLabel.className =
+    "ai-label";
+
+  reasonLabel.textContent =
+    "💡 이유";
+
+
+  const reason =
+    document.createElement(
+      "div"
+    );
+
+  reason.className =
+    "ai-reason";
+
+  reason.textContent =
+    analysis.reason;
+
+
+  reasonSection.appendChild(
+    reasonLabel
+  );
+
+  reasonSection.appendChild(
+    reason
+  );
+
+  container.appendChild(
+    reasonSection
+  );
+
+}
+
+
+/*
+==========================================
+뉴스 표시
+==========================================
+*/
+
+function renderNews(items) {
+
+  newsList.innerHTML = "";
+
+
+  if (items.length === 0) {
 
     newsList.innerHTML =
       '<div class="message">뉴스가 없습니다.</div>';
 
     return;
-
   }
 
 
@@ -1578,9 +1919,16 @@ function renderNews(
     function(item) {
 
       const articleKey =
-        getArticleKey(
-          item
+        getArticleKey(item);
+
+
+      const card =
+        document.createElement(
+          "div"
         );
+
+      card.className =
+        "news-card";
 
 
       const isNew =
@@ -1589,30 +1937,15 @@ function renderNews(
         );
 
 
-      const card =
-        document.createElement(
-          "div"
-        );
-
-
-      card.className =
-        "news-card";
-
-
       if (isNew) {
-
         card.classList.add(
           "is-new"
         );
-
       }
 
 
-
       /*
-      -------------------------
       배지
-      -------------------------
       */
 
       const top =
@@ -1620,13 +1953,11 @@ function renderNews(
           "div"
         );
 
-
       top.className =
         "news-top";
 
 
-      let newBadge =
-        null;
+      let newBadge = null;
 
 
       if (isNew) {
@@ -1636,14 +1967,11 @@ function renderNews(
             "span"
           );
 
-
         newBadge.className =
           "new-badge";
 
-
         newBadge.textContent =
           "NEW";
-
 
         top.appendChild(
           newBadge
@@ -1652,25 +1980,20 @@ function renderNews(
       }
 
 
-
       const stockBadge =
         document.createElement(
           "span"
         );
 
-
       stockBadge.className =
         "stock-badge";
-
 
       stockBadge.textContent =
         item.stock;
 
-
       top.appendChild(
         stockBadge
       );
-
 
 
       const sourceBadge =
@@ -1680,27 +2003,22 @@ function renderNews(
 
 
       if (
-        item.source ===
-        "GLOBAL"
+        item.source === "GLOBAL"
       ) {
 
         sourceBadge.className =
           "source-badge global";
 
-
         sourceBadge.textContent =
           item.sourceName
-            ?
-            "GLOBAL · " +
-            item.sourceName
-            :
-            "GLOBAL";
+            ? "GLOBAL · " +
+              item.sourceName
+            : "GLOBAL";
 
       } else {
 
         sourceBadge.className =
           "source-badge";
-
 
         sourceBadge.textContent =
           "NAVER";
@@ -1713,7 +2031,6 @@ function renderNews(
       );
 
 
-
       if (
         item.matchedKeyword
       ) {
@@ -1723,14 +2040,11 @@ function renderNews(
             "span"
           );
 
-
         keywordBadge.className =
           "keyword-badge";
 
-
         keywordBadge.textContent =
           item.matchedKeyword;
-
 
         top.appendChild(
           keywordBadge
@@ -1739,18 +2053,14 @@ function renderNews(
       }
 
 
-
       /*
-      -------------------------
       제목
-      -------------------------
       */
 
       const titleBox =
         document.createElement(
           "div"
         );
-
 
       titleBox.className =
         "news-title";
@@ -1761,22 +2071,18 @@ function renderNews(
           "a"
         );
 
-
       link.textContent =
         removeHtmlTags(
           item.title
         );
-
 
       link.href =
         safeUrl(
           item.link
         );
 
-
       link.target =
         "_blank";
-
 
       link.rel =
         "noopener noreferrer";
@@ -1790,13 +2096,9 @@ function renderNews(
             articleKey
           );
 
-
           if (newBadge) {
-
             newBadge.remove();
-
           }
-
 
           card.classList.remove(
             "is-new"
@@ -1811,11 +2113,8 @@ function renderNews(
       );
 
 
-
       /*
-      -------------------------
       설명
-      -------------------------
       */
 
       const description =
@@ -1823,10 +2122,8 @@ function renderNews(
           "div"
         );
 
-
       description.className =
         "news-description";
-
 
       description.textContent =
         removeHtmlTags(
@@ -1834,11 +2131,8 @@ function renderNews(
         );
 
 
-
       /*
-      -------------------------
       날짜
-      -------------------------
       */
 
       const meta =
@@ -1846,10 +2140,8 @@ function renderNews(
           "div"
         );
 
-
       meta.className =
         "news-meta";
-
 
       meta.textContent =
         formatDate(
@@ -1857,11 +2149,8 @@ function renderNews(
         );
 
 
-
       /*
-      ==================================================
-      👻 AI 분석 버튼
-      ==================================================
+      AI
       */
 
       const aiButton =
@@ -1869,14 +2158,11 @@ function renderNews(
           "button"
         );
 
-
       aiButton.className =
         "ai-button";
 
-
       aiButton.textContent =
         "👻 AI 분석";
-
 
 
       const aiResult =
@@ -1884,31 +2170,82 @@ function renderNews(
           "div"
         );
 
-
       aiResult.className =
         "ai-result";
 
 
+      /*
+      이미 분석한 기사라면
+      저장된 결과 즉시 표시
+      */
+
+      if (
+        aiAnalysisCache[
+          articleKey
+        ]
+      ) {
+
+        displayAIAnalysis(
+          aiResult,
+          aiAnalysisCache[
+            articleKey
+          ]
+        );
+
+        aiButton.textContent =
+          "👻 분석 완료";
+
+        aiButton.disabled =
+          true;
+
+      }
+
 
       /*
-        ★ 실제 AI 호출
+      새 AI 분석
       */
 
       aiButton.addEventListener(
         "click",
         async function() {
 
+          /*
+          혹시 캐시가 있으면
+          API를 부르지 않는다.
+          */
+
+          if (
+            aiAnalysisCache[
+              articleKey
+            ]
+          ) {
+
+            displayAIAnalysis(
+              aiResult,
+              aiAnalysisCache[
+                articleKey
+              ]
+            );
+
+            aiButton.textContent =
+              "👻 분석 완료";
+
+            aiButton.disabled =
+              true;
+
+            return;
+
+          }
+
+
           aiButton.disabled =
             true;
-
 
           aiButton.textContent =
             "👻 분석 중...";
 
-
           aiResult.className =
             "ai-result show";
-
 
           aiResult.textContent =
             "AI가 뉴스를 분석하고 있습니다...";
@@ -1922,49 +2259,26 @@ function renderNews(
               );
 
 
-            aiResult.innerHTML =
-              "";
-
-
-            const resultTitle =
-              document.createElement(
-                "div"
-              );
-
-
-            resultTitle.className =
-              "ai-result-title";
-
-
-            resultTitle.textContent =
-              "👻 AI 뉴스 분석";
-
-
-            const resultText =
-              document.createElement(
-                "div"
-              );
-
-
             /*
-              AI 결과는 외부 데이터이므로
-              innerHTML이 아니라
-              textContent로 넣는다.
-
-              → HTML / script 실행 방지
+            분석 저장
             */
 
-            resultText.textContent =
+            aiAnalysisCache[
+              articleKey
+            ] =
               analysis;
 
 
-            aiResult.appendChild(
-              resultTitle
-            );
+            saveAIAnalysisCache();
 
 
-            aiResult.appendChild(
-              resultText
+            /*
+            화면 표시
+            */
+
+            displayAIAnalysis(
+              aiResult,
+              analysis
             );
 
 
@@ -1974,13 +2288,9 @@ function renderNews(
 
           } catch (error) {
 
-            console.error(
-              error
-            );
+            console.error(error);
 
-
-            aiResult.innerHTML =
-              "";
+            aiResult.innerHTML = "";
 
 
             const errorText =
@@ -1988,10 +2298,8 @@ function renderNews(
                 "div"
               );
 
-
             errorText.className =
               "ai-error";
-
 
             errorText.textContent =
               "AI 분석에 실패했습니다. 다시 시도해 주세요.";
@@ -2002,14 +2310,8 @@ function renderNews(
             );
 
 
-            /*
-              실패한 경우에는
-              다시 누를 수 있게 한다.
-            */
-
             aiButton.disabled =
               false;
-
 
             aiButton.textContent =
               "👻 다시 분석";
@@ -2020,42 +2322,29 @@ function renderNews(
       );
 
 
-
       /*
-      -------------------------
       카드 완성
-      -------------------------
       */
 
-      card.appendChild(
-        top
-      );
-
+      card.appendChild(top);
 
       card.appendChild(
         titleBox
       );
 
-
       card.appendChild(
         description
       );
 
-
-      card.appendChild(
-        meta
-      );
-
+      card.appendChild(meta);
 
       card.appendChild(
         aiButton
       );
 
-
       card.appendChild(
         aiResult
       );
-
 
       newsList.appendChild(
         card
@@ -2067,26 +2356,21 @@ function renderNews(
 }
 
 
-
 /*
-==================================================
-HTML 태그 제거
-==================================================
+==========================================
+HTML 제거
+==========================================
 */
 
-function removeHtmlTags(
-  text
-) {
+function removeHtmlTags(text) {
 
   const temp =
     document.createElement(
       "div"
     );
 
-
   temp.innerHTML =
     text || "";
-
 
   return (
     temp.textContent ||
@@ -2097,51 +2381,39 @@ function removeHtmlTags(
 }
 
 
-
 /*
-==================================================
-외부 URL 검사
-==================================================
+==========================================
+URL 검사
+==========================================
 */
 
-function safeUrl(
-  url
-) {
+function safeUrl(url) {
 
   try {
 
     const parsed =
-      new URL(
-        url
-      );
-
+      new URL(url);
 
     if (
-      parsed.protocol ===
-        "https:" ||
-      parsed.protocol ===
-        "http:"
+      parsed.protocol === "https:" ||
+      parsed.protocol === "http:"
     ) {
 
       return url;
 
     }
 
-  } catch (error) {
-
-  }
-
+  } catch (error) {}
 
   return "#";
 
 }
 
 
-
 /*
-==================================================
-날짜
-==================================================
+==========================================
+날짜 표시
+==========================================
 */
 
 function formatDate(
@@ -2149,9 +2421,7 @@ function formatDate(
 ) {
 
   if (!dateString) {
-
     return "날짜 정보 없음";
-
   }
 
 
@@ -2175,30 +2445,20 @@ function formatDate(
   return date.toLocaleString(
     "ko-KR",
     {
-
-      month:
-        "short",
-
-      day:
-        "numeric",
-
-      hour:
-        "2-digit",
-
-      minute:
-        "2-digit"
-
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
     }
   );
 
 }
 
 
-
 /*
-==================================================
-앱 시작
-==================================================
+==========================================
+시작
+==========================================
 */
 
 renderStocks();
@@ -2208,5 +2468,4 @@ loadAllNews();
 </script>
 
 </body>
-
 </html>
